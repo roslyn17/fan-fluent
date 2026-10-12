@@ -6,8 +6,10 @@ The app is plain HTML, CSS and JavaScript with no build step and no dependencies
 
 - `index.html`: page markup. Open it directly in a browser, or serve the folder (e.g. `python3 -m http.server`).
 - `css/styles.css`: all styles.
-- `js/data.js`: team data, location short forms and game modes.
-- `js/app.js`: game logic, storage, UI and effects. Loaded after `data.js` as a classic script (not an ES module), so `file://` still works.
+- `js/leagues/<league>.js`: one data file per league (e.g. `nfl.js`): teams grouped by division and conference, location short forms, credits and disclaimer, sport flavor text (pop-ups, grades), and its `localStorage` keys. Adding a league should only need a new file here plus a `<script>` tag.
+- `js/modes.js`: the 6 game modes, shared by every league.
+- `js/app.js`: game logic, storage, UI and effects. All scripts are classic scripts (not ES modules), so `file://` still works.
+- `tests/check-data.js`: run `node tests/check-data.js` to check every league file against the data rules below (no dependencies).
 
 The original single-file prototype (`fan-fluent.html`) is in the first git commit.
 
@@ -67,5 +69,5 @@ The original single-file prototype (`fan-fluent.html`) is in the first git commi
 ## Roadmap
 
 1. ~~Turn the prototype into a proper project (separate files, git), keeping all current behavior.~~ Done.
-2. Move team data into a per-league data file so new leagues are just data.
+2. ~~Move team data into a per-league data file so new leagues are just data.~~ Done.
 3. Add a sport or league picker ("Fan Fluent: NBA," etc.) and apply the same rules and modes to each league.

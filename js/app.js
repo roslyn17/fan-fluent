@@ -1,9 +1,14 @@
+// ---------- league ----------
+const LEAGUE = LEAGUES.nfl;
+const TEAMS = LEAGUE.divisions.flatMap(d => d.teams.map(t => ({...t, conf:d.conf, div:d.name})));
+const LOC_ALIASES = LEAGUE.locAliases;
+
 // ---------- storage (per-viewer, optional) ----------
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
-let misses = store.get("gf-misses", {}); // {modeId: {teamName: count}}
+let misses = store.get(LEAGUE.storage.misses, {}); // {modeId: {teamName: count}}
 
 // ---------- helpers ----------
 const $ = id => document.getElementById(id);
@@ -22,11 +27,14 @@ function swatchHTML(t, big){
 
 // ---------- home ----------
 const pools = [["all",`All teams (${TEAMS.length} teams)`]];
-["AFC","NFC"].forEach(c=>pools.push([c,`${c} (${TEAMS.filter(t=>t.div.startsWith(c)).length} teams)`]));
+LEAGUE.conferences.forEach(c=>pools.push([c,`${c} (${TEAMS.filter(t=>t.conf===c).length} teams)`]));
+$("league-sub").textContent = `${LEAGUE.emoji} ${LEAGUE.sport} · Learn all ${TEAMS.length} teams ${LEAGUE.emoji}`;
+$("credits").textContent = `${LEAGUE.credits} ${LEAGUE.disclaimer}`;
+$("ball").textContent = LEAGUE.emoji;
 $("pool").innerHTML = pools.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
-const savedPool = store.get("gf-pool","all");
+const savedPool = store.get(LEAGUE.storage.pool,"all");
 $("pool").value = pools.some(([v])=>v===savedPool) ? savedPool : "all";
-$("pool").onchange = e => store.set("gf-pool", e.target.value);
+$("pool").onchange = e => store.set(LEAGUE.storage.pool, e.target.value);
 
 function renderModes(){
   for(const g of ["nc","c"]){
@@ -40,7 +48,7 @@ renderModes();
 function poolTeams(){
   const v = $("pool").value;
   if(v==="all") return TEAMS;
-  return TEAMS.filter(t=>t.div.startsWith(v));
+  return TEAMS.filter(t=>t.conf===v);
 }
 
 // ---------- quiz state ----------
@@ -75,12 +83,13 @@ function start(mode, forced, replay){
 }
 
 function distractors(t, n, sameKeyFn){
-  // prefer same-division teams for name/city modes, then others; never ambiguous ones
-  const others = TEAMS.filter(o => o !== t && !sameKeyFn(o));
+  // prefer same-division teams, then others; never ambiguous ones,
+  // and never two teams that share a location (e.g. both Los Angeles teams)
+  const others = TEAMS.filter(o => o !== t && o.loc !== t.loc && !sameKeyFn(o));
   const sameDiv = shuffle(others.filter(o=>o.div===t.div));
   const rest = shuffle(others.filter(o=>o.div!==t.div));
   const picked = [];
-  for(const o of [...sameDiv, ...rest]){ if(picked.length>=n) break; if(!picked.some(p=>sameKeyFn.call(null,o,p))) picked.push(o); }
+  for(const o of [...sameDiv, ...rest]){ if(picked.length>=n) break; if(!picked.some(p=>p.loc===o.loc || sameKeyFn(o,p))) picked.push(o); }
   return picked;
 }
 
@@ -128,7 +137,7 @@ function show(){
     area.querySelectorAll(".opt").forEach(b=>b.onclick=()=>chooseMC(+b.dataset.k));
   } else {
     $("submit").classList.remove("hidden"); $("idk").classList.remove("hidden");
-    area.innerHTML = `<input type="text" id="typed" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="${mode.ans==="name"?"Team name, e.g. Packers":"Location, e.g. Green Bay"}">`;
+    area.innerHTML = `<input type="text" id="typed" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="${mode.ans==="name"?`Team name, e.g. ${LEAGUE.examples.name}`:`Location, e.g. ${LEAGUE.examples.loc}`}">`;
     setTimeout(()=>$("typed").focus(), 0);
   }
 }
@@ -192,7 +201,8 @@ function finish(ok, idk){
     if(misses[id][t.name]) misses[id][t.name] = Math.max(0, misses[id][t.name]-1);
     $("feedback").className = "feedback good";
     $("feedback").textContent = (S.streak>=3 ? `🔥 ${S.streak} in a row! ` : "Correct! ") + answerText(t);
-    popText(S.streak>=3 ? "ON FIRE!" : ["TOUCHDOWN!","FIRST DOWN!","NICE CATCH!","+1"][Math.floor(Math.random()*4)], true);
+    const fl = LEAGUE.flavor;
+    popText(S.streak>=3 ? fl.streak : fl.good[Math.floor(Math.random()*fl.good.length)], true);
     confetti(hexes, 70);
   } else {
     S.streak = 0;
@@ -204,7 +214,8 @@ function finish(ok, idk){
       $("feedback").textContent = "No worries. Answer: " + answerText(t) + ". It'll come back in practice.";
     } else {
       $("feedback").textContent = "🚩 Not quite. Answer: " + answerText(t);
-      popText(["🚩 FLAG!","INCOMPLETE","FUMBLE!"][Math.floor(Math.random()*3)], false);
+      const bad = LEAGUE.flavor.bad;
+      popText(bad[Math.floor(Math.random()*bad.length)], false);
       $("qcard").classList.remove("shake"); void $("qcard").offsetWidth; $("qcard").classList.add("shake");
     }
   }
@@ -212,7 +223,7 @@ function finish(ok, idk){
   $("sb-streak").textContent = S.streak;
   $("sb-streak").classList.toggle("hot", S.streak>=3);
   moveBall((S.i+1)/S.queue.length);
-  store.set("gf-misses", misses);
+  store.set(LEAGUE.storage.misses, misses);
   $("submit").classList.add("hidden");
   $("idk").classList.add("hidden");
   $("next").classList.remove("hidden");
@@ -231,7 +242,8 @@ function results(){
   $("res-title").textContent = `${mode.title} · ${mode.fmt==="Type"?"Type it":"Multiple choice"}`;
   $("res-score").textContent = `${score}–${queue.length}`;
   const pct = score/queue.length;
-  $("res-grade").textContent = pct===1 ? "🏆 Hall of Fame" : pct>=.8 ? "⭐ All-Pro" : pct>=.6 ? "Starter" : pct>=.4 ? "Rookie" : "Practice Squad";
+  const g = LEAGUE.flavor.grades;
+  $("res-grade").textContent = pct===1 ? g[4] : pct>=.8 ? g[3] : pct>=.6 ? g[2] : pct>=.4 ? g[1] : g[0];
   $("res-msg").textContent = (pct===1 ? "Perfect round!" : pct>=.7 ? "Nice work. Review the ones you missed below." : "Keep going. Missed teams will come up more often.") + (S.best>=3 ? ` Best streak: 🔥 ${S.best}` : "");
   if(pct===1){ const all = TEAMS.flatMap(t=>t.colors.map(c=>c.hex)); confetti(all, 220); setTimeout(()=>confetti(all,160), 500); }
   else if(pct>=.8) confetti(["#ffcf3f","#ffffff","#3fe07f"], 90);

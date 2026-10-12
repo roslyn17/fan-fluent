@@ -2,7 +2,14 @@
 
 A no-account webapp for learning sports teams: names, locations and colors. It starts with the NFL and will expand to other leagues (NBA, MLB, NHL, MLS, Premier League).
 
-`fan-fluent.html` is the working prototype: a single file of HTML, CSS and JavaScript with no build step and no dependencies apart from Google Fonts. Treat it as the source of truth for current behavior.
+The app is plain HTML, CSS and JavaScript with no build step and no dependencies apart from Google Fonts. Treat the code as the source of truth for current behavior:
+
+- `index.html`: page markup. Open it directly in a browser, or serve the folder (e.g. `python3 -m http.server`).
+- `css/styles.css`: all styles.
+- `js/data.js`: team data, location short forms and game modes.
+- `js/app.js`: game logic, storage, UI and effects. Loaded after `data.js` as a classic script (not an ES module), so `file://` still works.
+
+The original single-file prototype (`fan-fluent.html`) is in the first git commit.
 
 ## Hard requirements
 
@@ -59,6 +66,6 @@ A no-account webapp for learning sports teams: names, locations and colors. It s
 
 ## Roadmap
 
-1. Turn the prototype into a proper project (separate files, git), keeping all current behavior.
+1. ~~Turn the prototype into a proper project (separate files, git), keeping all current behavior.~~ Done.
 2. Move team data into a per-league data file so new leagues are just data.
 3. Add a sport or league picker ("Fan Fluent: NBA," etc.) and apply the same rules and modes to each league.

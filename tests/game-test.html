@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fan Fluent game tests</title>
+<style>
+  body{font:14px/1.5 system-ui,sans-serif;margin:16px;background:#fff;color:#111}
+  .pass{color:#0a7a32} .fail{color:#b00020;font-weight:600}
+  #summary{font-size:18px;font-weight:700;margin-bottom:8px}
+  iframe{width:400px;height:300px;border:1px solid #ccc;max-width:100%}
+</style>
+</head>
+<body>
+<!-- Serve the project folder (e.g. python3 -m http.server) and open /tests/game-test.html.
+     It loads the real app in an iframe and checks the game rules from CLAUDE.md. -->
+<div id="summary">Running…</div>
+<ol id="log"></ol>
+<iframe id="app" src="../index.html"></iframe>
+<script>
+const results = [];
+function check(name, ok, detail){
+  results.push({name, ok, detail});
+  const li = document.createElement("li");
+  li.className = ok ? "pass" : "fail";
+  li.textContent = (ok ? "✓ " : "✗ ") + name + (ok || !detail ? "" : " — " + detail);
+  document.getElementById("log").appendChild(li);
+}
+
+document.getElementById("app").onload = () => {
+  const w = document.getElementById("app").contentWindow;
+  const ev = s => w.eval(s); // top-level const/let in the app's scripts are reachable through eval
+  try { run(w, ev); } catch(e){ check("test runner crashed", false, e.stack || String(e)); }
+  const failed = results.filter(r=>!r.ok).length;
+  document.getElementById("summary").textContent = failed ? `${failed} of ${results.length} checks failed` : `All ${results.length} checks passed`;
+  document.getElementById("summary").className = failed ? "fail" : "pass";
+  window.TEST_RESULTS = {passed: results.length - failed, failed, failures: results.filter(r=>!r.ok)};
+};
+
+function run(w, ev){
+  const TEAMS = ev("TEAMS"), MODES = ev("MODES");
+  const $ = id => w.document.getElementById(id);
+  const colorKey = t => t.colors.map(c=>c.name).sort().join("|");
+  const full = t => `${t.loc} ${t.name}`;
+  const team = name => TEAMS.find(t=>t.name===name);
+  const mode = id => MODES.find(m=>m.id===id);
+
+  // --- multiple choice: every team, every MC mode, many shuffles ---
+  for(const m of MODES.filter(m=>m.type==="mc")){
+    const problems = [];
+    for(const t of TEAMS){
+      for(let r=0;r<15;r++){
+        ev("start")(m, [t]);
+        const opts = ev("S").opts;
+        const correct = opts.filter(o=>ev("isCorrectMC")(o));
+        if(opts.length!==4) problems.push(`${full(t)}: ${opts.length} choices`);
+        if(correct.length!==1) problems.push(`${full(t)}: ${correct.length} correct choices`);
+        if(new Set(opts.map(o=>o.loc)).size!==4) problems.push(`${full(t)}: two choices share a location (${opts.map(full).join(", ")})`);
+        if(m.group==="c" && new Set(opts.map(colorKey)).size!==4) problems.push(`${full(t)}: two choices have the same color names (${opts.map(full).join(", ")})`);
+        const sameDivAvail = TEAMS.filter(o=>o!==t && o.div===t.div && o.loc!==t.loc && colorKey(o)!==colorKey(t)).length;
+        const sameDivUsed = opts.filter(o=>o!==t && o.div===t.div).length;
+        if(sameDivUsed < Math.min(3, sameDivAvail)) problems.push(`${full(t)}: didn't prefer same-division wrong answers`);
+      }
+    }
+    check(`MC "${m.title}" (${m.id}): 4 choices, 1 correct, no shared locations${m.group==="c"?", no identical color sets":""}, same division first`, !problems.length, [...new Set(problems)].slice(0,5).join("; "));
+  }
+
+  // --- prompts are worded "Complete the team name" ---
+  ev("start")(mode("c2n-mc"), [team("Panthers")]);
+  check('City → Team prompt reads "Carolina ____" with "Complete the team name"', $("prompt").textContent.trim()==="Carolina ____" && $("prompt-label").textContent==="Complete the team name");
+  ev("start")(mode("n2c-mc"), [team("Panthers")]);
+  check('Team → City prompt reads "____ Panthers"', $("prompt").textContent.trim()==="____ Panthers" && $("prompt-label").textContent==="Complete the team name");
+
+  // --- typed answers ---
+  function typed(modeId, teamName, input){
+    ev("start")(mode(modeId), [team(teamName)]);
+    $("typed").value = input;
+    ev("checkTyped")();
+    return ev("S").score === 1;
+  }
+  const nameCases = [
+    ["Packers","Packers",true], ["Packers","green bay packers",true], ["Packers","  Green   Bay  PACKERS ",true],
+    ["Packers","Pack",false], ["Packers","Packer",false], ["Packers","Packers.",false], ["Packers","Pakers",false],
+    ["49ers","49ers",true], ["49ers","San Francisco 49ers",true], ["49ers","Niners",false],
+    ["Buccaneers","Bucs",false], ["Buccaneers","Tampa Bay Buccaneers",true],
+    ["Giants","Jets",true], ["Giants","New York Jets",true], ["Rams","Chargers",true], ["Jets","Giants",true],
+    ["Bills","Dolphins",false],
+  ];
+  const bad = nameCases.filter(([t,inp,exp])=>typed("c2n-tx",t,inp)!==exp);
+  check(`Typed team names (${nameCases.length} cases: exact spelling, either shared-location team, no nicknames)`, !bad.length, bad.map(([t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
+
+  const locCases = [
+    ["Packers","Green Bay",true], ["Packers","green  bay",true], ["Packers","Greenbay",false], ["Packers","GB",false],
+    ["Rams","LA",true], ["Rams","L.A.",true], ["Chargers","Los Angeles",true],
+    ["Giants","NY",true], ["Jets","NYC",true], ["Jets","N.Y.",true],
+    ["Chiefs","KC",true], ["49ers","SF",true], ["Commanders","DC",true], ["Commanders","Washington DC",true], ["Commanders","Washington, D.C.",true],
+    ["Eagles","Philly",false], ["Raiders","Vegas",false], ["Colts","Indy",false], ["Buccaneers","Tampa",false],
+    ["Panthers","Charlotte",false], ["Patriots","Boston",false], ["Panthers","Carolina",true],
+  ];
+  const badLoc = locCases.filter(([t,inp,exp])=>typed("n2c-tx",t,inp)!==exp);
+  check(`Typed locations (${locCases.length} cases: only LA/NY/NYC/KC/SF/DC short forms)`, !badLoc.length, badLoc.map(([t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
+
+  // --- IDK: typing modes only, counts as a miss, resets streak, no shake ---
+  ev("start")(mode("c2n-mc"), [team("Bills")]);
+  check("IDK hidden in multiple choice", $("idk").classList.contains("hidden"));
+  ev("start")(mode("c2n-tx"), TEAMS.slice(0,3));
+  $("typed").value = "Bills"; ev("checkTyped")(); ev("next")();
+  $("typed").value = "Dolphins"; ev("checkTyped")(); ev("next")();
+  const streakBefore = ev("S").streak;
+  $("qcard").classList.remove("shake");
+  $("idk").click();
+  const S = ev("S");
+  check("IDK: visible in typing mode, counts as a miss, resets streak, no shake", streakBefore===2 && S.streak===0 && S.missed.length===1 && !$("qcard").classList.contains("shake") && $("feedback").textContent.startsWith("No worries"));
+
+  // --- round length and practice-missed replay ---
+  w.document.getElementById("pool").value = "all";
+  ev("start")(mode("t2col"));
+  check("A round is 10 questions", ev("S").queue.length===10);
+  const missedNames = [], missedOpts = [];
+  for(let i=0;i<10;i++){
+    const s = ev("S");
+    const wrongIdx = s.opts.findIndex(o=>!ev("isCorrectMC")(o));
+    const pick = i%3===0 ? wrongIdx : s.opts.findIndex(o=>ev("isCorrectMC")(o));
+    if(i%3===0){ missedNames.push(s.current.name); missedOpts.push(s.opts.map(o=>o.name).join(",")); }
+    ev("chooseMC")(pick); ev("next")();
+  }
+  check(`Results: "Practice missed (${missedNames.length})" is the highlighted button`, $("retry-missed").textContent===`Practice missed (${missedNames.length})` && !$("retry-missed").classList.contains("ghost") && $("again").classList.contains("ghost"));
+  $("retry-missed").click();
+  const replayNames = [], replayOpts = [];
+  for(let i=0;i<missedNames.length;i++){
+    const s = ev("S"); replayNames.push(s.current.name); replayOpts.push(s.opts.map(o=>o.name).join(","));
+    ev("chooseMC")(s.opts.findIndex(o=>ev("isCorrectMC")(o))); ev("next")();
+  }
+  check(`Practice replays the exact missed questions in order with the same choices, titled "Practice · N missed teams"`, JSON.stringify(replayNames)===JSON.stringify(missedNames) && JSON.stringify(replayOpts)===JSON.stringify(missedOpts));
+  check("Perfect practice round hides Practice missed", $("retry-missed").classList.contains("hidden"));
+
+  // --- pools ---
+  const pools = [...$("pool").options].map(o=>o.textContent);
+  check("Pool options are All teams (32 teams), AFC (16 teams), NFC (16 teams)", JSON.stringify(pools)===JSON.stringify(["All teams (32 teams)","AFC (16 teams)","NFC (16 teams)"]), pools.join(" | "));
+  $("pool").value = "AFC";
+  ev("start")(mode("c2n-mc"));
+  check("AFC pool only asks AFC teams", ev("S").queue.every(t=>t.conf==="AFC"));
+  $("pool").value = "all";
+
+  // --- footer ---
+  check("Footer keeps disclaimer and source credits", /Not affiliated with or endorsed by the NFL or any of its teams\./.test($("credits").textContent) && /NFL\.com/.test($("credits").textContent) && /TeamColorCodes\.com/.test($("credits").textContent));
+
+  ev("goHome")();
+}
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ The app is plain HTML, CSS and JavaScript with no build step and no dependencies
 - `js/modes.js`: the 6 game modes, shared by every league.
 - `js/app.js`: game logic, storage, UI and effects. All scripts are classic scripts (not ES modules), so `file://` still works.
 - `tests/check-data.js`: run `node tests/check-data.js` to check every league file against the data rules below (no dependencies).
+- `tests/game-test.html`: serve the folder and open `/tests/game-test.html` to play the real app automatically and check the game rules below (choices, typed answers, IDK, practice replay, pools, footer).
 
 The original single-file prototype (`fan-fluent.html`) is in the first git commit.
 

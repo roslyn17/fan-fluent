@@ -14,13 +14,11 @@ let misses = store.get(LEAGUE.storage.misses, {}); // {modeId: {teamName: count}
 const $ = id => document.getElementById(id);
 const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const full = t => `${t.loc} ${t.name}`;
-const norm = s => s.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]/g,"");
+// typed answers: team names ignore only capitalization and extra spaces;
+// locations also ignore periods and commas (so "L.A." and "Washington, D.C." work)
+const exactName = s => s.toLowerCase().replace(/\s+/g," ").trim();
+const exactLoc = s => exactName(s.replace(/[.,]/g,""));
 const colorKey = t => t.colors.map(c=>c.name).sort().join("|");
-function lev(a,b){ const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
-  let p=Array.from({length:n+1},(_,j)=>j);
-  for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; }
-  return p[n]; }
-const close = (guess, target) => { const tol = target.length <= 5 ? 1 : 2; return guess === target || (guess.length >= 3 && lev(guess, target) <= tol); };
 function swatchHTML(t, big){
   return `<div class="swatches${big?' big':''}">` + t.colors.map(c=>`<div class="sw"><i style="background:${c.hex}"></i><span>${c.name}</span></div>`).join("") + `</div>`;
 }
@@ -164,15 +162,15 @@ function chooseMC(k){
 function checkTyped(){
   if(S.answered) return;
   const raw = $("typed").value.trim(); if(!raw) return;
-  const g = norm(raw); const t = S.current; let ok=false;
+  const t = S.current; let ok=false;
   if(S.mode.ans==="name"){
     for(const c of TEAMS.filter(o=>o.loc===t.loc)){
       // exact spelling required (capitalization and spacing ignored); "Packers" or "Green Bay Packers"
-      if([c.name, full(c)].map(exact).includes(exact(raw))) ok = true;
+      if([c.name, full(c)].map(exactName).includes(exactName(raw))) ok = true;
     }
   } else {
-    // exact spelling required (capitalization ignored); official short forms allowed
-    ok = [t.loc, ...(LOC_ALIASES[t.loc]||[])].map(exact).includes(exact(raw));
+    // exact spelling required (capitalization, spaces, periods and commas ignored); official short forms allowed
+    ok = [t.loc, ...(LOC_ALIASES[t.loc]||[])].map(exactLoc).includes(exactLoc(raw));
   }
   $("typed").disabled = true;
   finish(ok);

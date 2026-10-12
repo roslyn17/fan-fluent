@@ -27,15 +27,35 @@ function check(name, ok, detail){
   document.getElementById("log").appendChild(li);
 }
 
-document.getElementById("app").onload = () => {
+document.getElementById("app").onload = async () => {
   const w = document.getElementById("app").contentWindow;
   const ev = s => w.eval(s); // top-level const/let in the app's scripts are reachable through eval
   try { run(w, ev); } catch(e){ check("test runner crashed", false, e.stack || String(e)); }
+  try { await runWithoutStorage(); } catch(e){ check("app works with storage unavailable", false, e.stack || String(e)); }
   const failed = results.filter(r=>!r.ok).length;
   document.getElementById("summary").textContent = failed ? `${failed} of ${results.length} checks failed` : `All ${results.length} checks passed`;
   document.getElementById("summary").className = failed ? "fail" : "pass";
   window.TEST_RESULTS = {passed: results.length - failed, failed, failures: results.filter(r=>!r.ok)};
 };
+
+// Loads a second copy of the app where every localStorage access throws.
+async function runWithoutStorage(){
+  const html = await (await fetch("../index.html")).text();
+  const breakStorage = `<base href="${new URL("../", location.href)}"><script>
+    window.__errors = []; addEventListener("error", e => __errors.push(e.message));
+    Object.defineProperty(window, "localStorage", {get(){ throw new Error("storage blocked"); }});<\/script>`;
+  const f = document.createElement("iframe");
+  f.srcdoc = html.replace("<head>", "<head>" + breakStorage);
+  await new Promise(r => { f.onload = r; document.body.appendChild(f); });
+  const w = f.contentWindow, ev = s => w.eval(s);
+  let blocked = false; try { w.localStorage; } catch(e){ blocked = true; }
+  check("Storage really is blocked in the no-storage copy", blocked);
+  ev("start")(ev("MODES")[0]);
+  for(let i=0;i<10;i++){ ev("chooseMC")(0); ev("next")(); }
+  const ok = !w.__errors.length && !w.document.getElementById("results").classList.contains("hidden");
+  check("App still works with localStorage unavailable (full round, no errors)", ok, w.__errors.join("; "));
+  f.remove();
+}
 
 function run(w, ev){
   const TEAMS = ev("TEAMS"), MODES = ev("MODES");

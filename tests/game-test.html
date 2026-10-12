@@ -16,7 +16,7 @@
      It loads the real app in an iframe and checks the game rules from CLAUDE.md. -->
 <div id="summary">Running…</div>
 <ol id="log"></ol>
-<iframe id="app" src="../index.html"></iframe>
+<iframe id="app" src="../index.html#nfl"></iframe>
 <script>
 const results = [];
 function check(name, ok, detail){
@@ -58,14 +58,16 @@ async function runWithoutStorage(){
 }
 
 function run(w, ev){
-  const TEAMS = ev("TEAMS"), MODES = ev("MODES");
+  const MODES = ev("MODES");
+  let TEAMS = ev("TEAMS");
   const $ = id => w.document.getElementById(id);
   const colorKey = t => t.colors.map(c=>c.name).sort().join("|");
   const full = t => `${t.loc} ${t.name}`;
   const team = name => TEAMS.find(t=>t.name===name);
   const mode = id => MODES.find(m=>m.id===id);
 
-  // --- multiple choice: every team, every MC mode, many shuffles ---
+  // --- multiple choice: every team, every MC mode, many shuffles (run for each league below) ---
+  function mcChecks(league){
   for(const m of MODES.filter(m=>m.type==="mc")){
     const problems = [];
     for(const t of TEAMS){
@@ -82,8 +84,10 @@ function run(w, ev){
         if(sameDivUsed < Math.min(3, sameDivAvail)) problems.push(`${full(t)}: didn't prefer same-division wrong answers`);
       }
     }
-    check(`MC "${m.title}" (${m.id}): 4 choices, 1 correct, no shared locations${m.group==="c"?", no identical color sets":""}, same division first`, !problems.length, [...new Set(problems)].slice(0,5).join("; "));
+    check(`${league} MC "${m.title}" (${m.id}): 4 choices, 1 correct, no shared locations${m.group==="c"?", no identical color sets":""}, same division first`, !problems.length, [...new Set(problems)].slice(0,5).join("; "));
   }
+  }
+  mcChecks("NFL");
 
   // --- prompts are worded "Complete the team name" ---
   ev("start")(mode("c2n-mc"), [team("Panthers")]);
@@ -164,6 +168,22 @@ function run(w, ev){
 
   // --- footer ---
   check("Footer keeps disclaimer and source credits", /Not affiliated with or endorsed by the NFL or any of its teams\./.test($("credits").textContent) && /NFL\.com/.test($("credits").textContent) && /TeamColorCodes\.com/.test($("credits").textContent));
+
+  // --- NBA (same rules, different data) ---
+  ev("setLeague")("nba"); TEAMS = ev("TEAMS");
+  check("Switching league updates pools, subtitle and footer",
+    JSON.stringify([...$("pool").options].map(o=>o.textContent))===JSON.stringify(["All teams (30 teams)","East (15 teams)","West (15 teams)"])
+    && $("league-sub").textContent.includes("Basketball") && /endorsed by the NBA/.test($("credits").textContent));
+  mcChecks("NBA");
+  const nbaCases = [
+    ["c2n-tx","Lakers","Clippers",true], ["c2n-tx","Clippers","Los Angeles Lakers",true], ["c2n-tx","Knicks","Nets",false],
+    ["c2n-tx","76ers","Sixers",false], ["c2n-tx","Trail Blazers","trail  blazers",true], ["c2n-tx","Trail Blazers","Blazers",false],
+    ["n2c-tx","Warriors","Golden State",true], ["n2c-tx","Warriors","San Francisco",false], ["n2c-tx","Clippers","LA",true],
+    ["n2c-tx","Thunder","OKC",false], ["n2c-tx","Knicks","NYC",true], ["n2c-tx","Nets","NY",false], ["n2c-tx","Wizards","D.C.",true],
+  ];
+  const badNba = nbaCases.filter(([m,t,inp,exp])=>typed(m,t,inp)!==exp);
+  check(`NBA typed answers (${nbaCases.length} cases)`, !badNba.length, badNba.map(([m,t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
+  ev("setLeague")("nfl");
 
   ev("goHome")();
 }

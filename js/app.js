@@ -1,14 +1,13 @@
-// ---------- league ----------
-const LEAGUE = LEAGUES.nfl;
-const TEAMS = LEAGUE.divisions.flatMap(d => d.teams.map(t => ({...t, conf:d.conf, div:d.name})));
-const LOC_ALIASES = LEAGUE.locAliases;
-
 // ---------- storage (per-viewer, optional) ----------
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
-let misses = store.get(LEAGUE.storage.misses, {}); // {modeId: {teamName: count}}
+
+// ---------- league ----------
+// Leagues come from js/leagues/*.js, in the order their <script> tags appear.
+let LEAGUE, TEAMS, LOC_ALIASES;
+let misses = {}; // {modeId: {teamName: count}}, per league
 
 // ---------- helpers ----------
 const $ = id => document.getElementById(id);
@@ -24,15 +23,32 @@ function swatchHTML(t, big){
 }
 
 // ---------- home ----------
-const pools = [["all",`All teams (${TEAMS.length} teams)`]];
-LEAGUE.conferences.forEach(c=>pools.push([c,`${c} (${TEAMS.filter(t=>t.conf===c).length} teams)`]));
-$("league-sub").textContent = `${LEAGUE.emoji} ${LEAGUE.sport} · Learn all ${TEAMS.length} teams ${LEAGUE.emoji}`;
-$("credits").textContent = `${LEAGUE.credits} ${LEAGUE.disclaimer}`;
-$("ball").textContent = LEAGUE.emoji;
-$("pool").innerHTML = pools.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
-const savedPool = store.get(LEAGUE.storage.pool,"all");
-$("pool").value = pools.some(([v])=>v===savedPool) ? savedPool : "all";
+function setLeague(id){
+  LEAGUE = LEAGUES[id] || LEAGUES.nfl;
+  TEAMS = LEAGUE.divisions.flatMap(d => d.teams.map(t => ({...t, conf:d.conf, div:d.name})));
+  LOC_ALIASES = LEAGUE.locAliases;
+  misses = store.get(LEAGUE.storage.misses, {});
+  store.set("gf-league", LEAGUE.id);
+  try{ history.replaceState(null, "", "#" + LEAGUE.id); }catch(e){}
+
+  document.querySelectorAll(".league").forEach(b=>b.setAttribute("aria-pressed", b.dataset.id===LEAGUE.id));
+  $("league-sub").textContent = `${LEAGUE.emoji} ${LEAGUE.sport} · Learn all ${TEAMS.length} teams ${LEAGUE.emoji}`;
+  $("credits").textContent = `${LEAGUE.credits} ${LEAGUE.disclaimer}`;
+  $("ball").textContent = LEAGUE.emoji;
+  const pools = [["all",`All teams (${TEAMS.length} teams)`]];
+  LEAGUE.conferences.forEach(c=>pools.push([c,`${c} (${TEAMS.filter(t=>t.conf===c).length} teams)`]));
+  $("pool").innerHTML = pools.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
+  const savedPool = store.get(LEAGUE.storage.pool,"all");
+  $("pool").value = pools.some(([v])=>v===savedPool) ? savedPool : "all";
+}
 $("pool").onchange = e => store.set(LEAGUE.storage.pool, e.target.value);
+
+const leagueIds = Object.keys(LEAGUES);
+$("league-picker").classList.toggle("hidden", leagueIds.length < 2);
+$("leagues").innerHTML = leagueIds.map(id=>`<button class="league" data-id="${id}" aria-pressed="false">${LEAGUES[id].emoji} ${LEAGUES[id].label}</button>`).join("");
+document.querySelectorAll(".league").forEach(b=>b.onclick=()=>setLeague(b.dataset.id));
+const hashLeague = location.hash.slice(1).toLowerCase();
+setLeague(LEAGUES[hashLeague] ? hashLeague : store.get("gf-league", "nfl"));
 
 function renderModes(){
   for(const g of ["nc","c"]){

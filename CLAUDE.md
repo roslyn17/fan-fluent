@@ -72,3 +72,16 @@ The original single-file prototype (`fan-fluent.html`) is in the first git commi
 1. ~~Turn the prototype into a proper project (separate files, git), keeping all current behavior.~~ Done.
 2. ~~Move team data into a per-league data file so new leagues are just data.~~ Done.
 3. Add a sport or league picker ("Fan Fluent: NBA," etc.) and apply the same rules and modes to each league.
+
+## Open questions (NBA draft, branch `draft/league-picker`)
+
+This branch adds a league picker (NFL / NBA buttons at the top of the home screen, remembered in `localStorage` and in the URL as `#nfl` / `#nba`) and a draft `js/leagues/nba.js`. Decide these before merging:
+
+1. **Product name vs. roadmap:** the roadmap says "Fan Fluent: NBA," but the hard requirements say not to put league names in the product name. The draft keeps the title "Fan Fluent" and shows the league only on the picker buttons and footer.
+2. **Look and feel:** NBA rounds still use the football turf, yard-line progress bar and stadium theme (only the emoji, pop-ups and grades change). A basketball court theme?
+3. **Pop-ups and grades:** draft uses SWISH! / BUCKET! / AND ONE! / +2, ON FIRE!, and AIRBALL! / BRICK! / TURNOVER!; grades G League → Rookie → Starter → All-Star → Hall of Fame.
+4. **Clippers location:** NBA.com brands them "LA Clippers." The draft uses "Los Angeles" so they're treated as sharing a location with the Lakers (and "LA" is still accepted when typed).
+5. **Short forms:** the draft allows only LA, NY, NYC, DC / Washington DC. "OKC" is rejected. Allow it?
+6. **Utah Jazz colors:** TeamColorCodes.com still lists navy / green / yellow, but the team now uses purple, black and sky blue (2025–26). Use the new colors (needs a hex source) or keep the listed ones?
+7. **Celtics:** draft uses green and white (fan-recognized exception, like the Colts and Jets). Other color picks take the first 2–3 listed colors, using simple names.
+8. **Conference labels:** pool filter shows "East (15 teams)" and "West (15 teams)." Prefer "Eastern Conference"?

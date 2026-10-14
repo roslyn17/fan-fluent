@@ -1,4 +1,4 @@
-// NBA data (DRAFT: color picks and open questions need review; see CLAUDE.md "Open questions (NBA draft)").
+// NBA data.
 // Names, locations, conferences and divisions per NBA.com (https://www.nba.com/teams).
 // Colors per TeamColorCodes.com (https://teamcolorcodes.com/nba-team-color-codes/), primary colors only (2–3).
 (function(){
@@ -8,6 +8,7 @@ const C = (name, hex) => ({name, hex});
   label: "NBA",
   sport: "Basketball",
   emoji: "🏀",
+  surface: "court", // background and progress-bar theme (see css/styles.css)
   credits: "Team names, locations and conferences per NBA.com. Colors per TeamColorCodes.com (primary colors only).",
   disclaimer: "Not affiliated with or endorsed by the NBA or any of its teams.",
   storage: {misses: "gf-nba-misses", pool: "gf-nba-pool"},
@@ -19,9 +20,9 @@ const C = (name, hex) => ({name, hex});
     // lowest to highest: <40%, 40%+, 60%+, 80%+, perfect
     grades: ["G League", "Rookie", "Starter", "⭐ All-Star", "🏆 Hall of Fame"],
   },
-  // Only the short forms CLAUDE.md allows (LA, NY, NYC, DC) that apply to NBA locations
+  // Only the short forms CLAUDE.md allows: LA, NY, NYC, OKC, DC
   locAliases: {
-    "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Washington": ["Washington DC", "DC"],
+    "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Oklahoma City": ["OKC"], "Washington": ["Washington DC", "DC"],
   },
   conferences: ["East", "West"],
   divisions: [
@@ -51,8 +52,9 @@ const C = (name, hex) => ({name, hex});
       {name: "Timberwolves", loc: "Minnesota", colors: [C("navy", "#0C2340"), C("blue", "#236192"), C("green", "#78BE20")]},
       {name: "Thunder", loc: "Oklahoma City", colors: [C("blue", "#007AC1"), C("orange", "#EF3B24"), C("navy", "#002D62")]},
       {name: "Trail Blazers", loc: "Portland", colors: [C("red", "#E03A3E"), C("black", "#000000")]},
-      // TeamColorCodes still lists the pre-2025 palette; the team now uses purple, black and sky blue
-      {name: "Jazz", loc: "Utah", colors: [C("navy", "#002B5C"), C("green", "#00471B"), C("yellow", "#F9A01B")]},
+      // Current palette (purple, black, sky blue). TeamColorCodes' main list is still the old navy/green/yellow,
+      // so the purple and sky blue hex codes come from its 2004–2010 Jazz colors on the same page.
+      {name: "Jazz", loc: "Utah", colors: [C("purple", "#3E2680"), C("black", "#000000"), C("sky blue", "#6CAEDF")]},
     ]},
     {conf: "West", name: "Pacific", teams: [
       {name: "Warriors", loc: "Golden State", colors: [C("blue", "#1D428A"), C("yellow", "#FFC72C")]},

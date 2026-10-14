@@ -31,6 +31,7 @@ document.getElementById("app").onload = async () => {
   const w = document.getElementById("app").contentWindow;
   const ev = s => w.eval(s); // top-level const/let in the app's scripts are reachable through eval
   try { run(w, ev); } catch(e){ check("test runner crashed", false, e.stack || String(e)); }
+  try { await runHashChange(w, ev); } catch(e){ check("hash change", false, e.stack || String(e)); }
   try { await runWithoutStorage(); } catch(e){ check("app works with storage unavailable", false, e.stack || String(e)); }
   const failed = results.filter(r=>!r.ok).length;
   document.getElementById("summary").textContent = failed ? `${failed} of ${results.length} checks failed` : `All ${results.length} checks passed`;
@@ -179,13 +180,27 @@ function run(w, ev){
     ["c2n-tx","Lakers","Clippers",true], ["c2n-tx","Clippers","Los Angeles Lakers",true], ["c2n-tx","Knicks","Nets",false],
     ["c2n-tx","76ers","Sixers",false], ["c2n-tx","Trail Blazers","trail  blazers",true], ["c2n-tx","Trail Blazers","Blazers",false],
     ["n2c-tx","Warriors","Golden State",true], ["n2c-tx","Warriors","San Francisco",false], ["n2c-tx","Clippers","LA",true],
-    ["n2c-tx","Thunder","OKC",false], ["n2c-tx","Knicks","NYC",true], ["n2c-tx","Nets","NY",false], ["n2c-tx","Wizards","D.C.",true],
+    ["n2c-tx","Thunder","OKC",true], ["n2c-tx","Thunder","Okla City",false], ["n2c-tx","Knicks","NYC",true], ["n2c-tx","Nets","NY",false], ["n2c-tx","Wizards","D.C.",true],
   ];
   const badNba = nbaCases.filter(([m,t,inp,exp])=>typed(m,t,inp)!==exp);
   check(`NBA typed answers (${nbaCases.length} cases)`, !badNba.length, badNba.map(([m,t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
-  ev("setLeague")("nfl");
+  typed("c2n-tx","Lakers","Bulls");
+  check("NBA: court surface, and no 🚩 on a wrong answer", w.document.documentElement.dataset.surface==="court" && $("feedback").textContent.startsWith("Not quite."), $("feedback").textContent);
+  ev("setLeague")("nfl"); TEAMS = ev("TEAMS");
+  typed("c2n-tx","Bills","Jets");
+  check("NFL: field surface, and 🚩 on a wrong answer", w.document.documentElement.dataset.surface==="field" && $("feedback").textContent.startsWith("🚩 Not quite."), $("feedback").textContent);
 
   ev("goHome")();
+}
+
+// Editing the #league part of the address switches league without a reload.
+async function runHashChange(w, ev){
+  w.location.hash = "nba";
+  await new Promise(r => setTimeout(r, 50));
+  const toNba = ev("LEAGUE").id==="nba" && !w.document.getElementById("home").classList.contains("hidden");
+  w.location.hash = "nfl";
+  await new Promise(r => setTimeout(r, 50));
+  check("Changing #nba / #nfl in the address switches league", toNba && ev("LEAGUE").id==="nfl");
 }
 </script>
 </body>

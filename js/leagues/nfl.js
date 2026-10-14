@@ -8,6 +8,7 @@ const C = (name, hex) => ({name, hex});
   label: "NFL",
   sport: "Football",
   emoji: "🏈",
+  surface: "field", // background and progress-bar theme (see css/styles.css)
   credits: "Team names, locations and conferences per NFL.com. Colors per TeamColorCodes.com (primary colors only).",
   disclaimer: "Not affiliated with or endorsed by the NFL or any of its teams.",
   // localStorage keys from the original single-league prototype, kept so saved progress carries over
@@ -17,6 +18,7 @@ const C = (name, hex) => ({name, hex});
     good: ["TOUCHDOWN!", "FIRST DOWN!", "NICE CATCH!", "+1"],
     streak: "ON FIRE!",
     bad: ["🚩 FLAG!", "INCOMPLETE", "FUMBLE!"],
+    missIcon: "🚩", // starts the "Not quite" message after a wrong answer
     // lowest to highest: <40%, 40%+, 60%+, 80%+, perfect
     grades: ["Practice Squad", "Rookie", "Starter", "⭐ All-Pro", "🏆 Hall of Fame"],
   },

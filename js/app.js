@@ -35,6 +35,7 @@ function setLeague(id){
   $("league-sub").textContent = `${LEAGUE.emoji} ${LEAGUE.sport} · Learn all ${TEAMS.length} teams ${LEAGUE.emoji}`;
   $("credits").textContent = `${LEAGUE.credits} ${LEAGUE.disclaimer}`;
   $("ball").textContent = LEAGUE.emoji;
+  document.documentElement.dataset.surface = LEAGUE.surface || "field";
   const pools = [["all",`All teams (${TEAMS.length} teams)`]];
   LEAGUE.conferences.forEach(c=>pools.push([c,`${c} (${TEAMS.filter(t=>t.conf===c).length} teams)`]));
   $("pool").innerHTML = pools.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
@@ -47,8 +48,10 @@ const leagueIds = Object.keys(LEAGUES);
 $("league-picker").classList.toggle("hidden", leagueIds.length < 2);
 $("leagues").innerHTML = leagueIds.map(id=>`<button class="league" data-id="${id}" aria-pressed="false">${LEAGUES[id].emoji} ${LEAGUES[id].label}</button>`).join("");
 document.querySelectorAll(".league").forEach(b=>b.onclick=()=>setLeague(b.dataset.id));
-const hashLeague = location.hash.slice(1).toLowerCase();
-setLeague(LEAGUES[hashLeague] ? hashLeague : store.get("gf-league", "nfl"));
+const hashLeague = () => location.hash.slice(1).toLowerCase();
+setLeague(LEAGUES[hashLeague()] ? hashLeague() : store.get("gf-league", "nfl"));
+// editing the #league in the address bar (or a link to it) switches league without a reload
+addEventListener("hashchange", ()=>{ const id = hashLeague(); if(LEAGUES[id] && id!==LEAGUE.id){ goHome(); setLeague(id); } });
 
 function renderModes(){
   for(const g of ["nc","c"]){
@@ -227,7 +230,7 @@ function finish(ok, idk){
     if(idk){
       $("feedback").textContent = "No worries. Answer: " + answerText(t) + ". It'll come back in practice.";
     } else {
-      $("feedback").textContent = "🚩 Not quite. Answer: " + answerText(t);
+      $("feedback").textContent = (LEAGUE.flavor.missIcon ? LEAGUE.flavor.missIcon + " " : "") + "Not quite. Answer: " + answerText(t);
       const bad = LEAGUE.flavor.bad;
       popText(bad[Math.floor(Math.random()*bad.length)], false);
       $("qcard").classList.remove("shake"); void $("qcard").offsetWidth; $("qcard").classList.add("shake");

@@ -12,11 +12,13 @@ let misses = {}; // {modeId: {teamName: count}}, per league
 // ---------- helpers ----------
 const $ = id => document.getElementById(id);
 const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
-const full = t => `${t.loc} ${t.name}`;
+const full = t => t.loc ? `${t.loc} ${t.name}` : t.name; // some teams have no location (e.g. "Athletics")
+// a team with no location sits out the name/city modes; one with no colors sits out the colors modes
+const canPlay = (t, mode) => mode.group==="c" ? !!t.colors : !!t.loc;
 // typed answers: team names ignore only capitalization and extra spaces;
-// locations also ignore periods and commas (so "L.A." and "Washington, D.C." work)
+// locations also ignore periods, commas and accents (so "L.A.", "Washington, D.C." and "Montreal" work)
 const exactName = s => s.toLowerCase().replace(/\s+/g," ").trim();
-const exactLoc = s => exactName(s.replace(/[.,]/g,""));
+const exactLoc = s => exactName(s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[.,]/g,""));
 const colorKey = t => t.colors.map(c=>c.name).sort().join("|");
 function swatchHTML(t, big){
   return `<div class="swatches${big?' big':''}">` + t.colors.map(c=>`<div class="sw"><i style="background:${c.hex}"></i><span>${c.name}</span></div>`).join("") + `</div>`;
@@ -62,10 +64,9 @@ function renderModes(){
 }
 renderModes();
 
-function poolTeams(){
+function poolTeams(mode){
   const v = $("pool").value;
-  if(v==="all") return TEAMS;
-  return TEAMS.filter(t=>t.conf===v);
+  return TEAMS.filter(t => (v==="all" || t.conf===v) && canPlay(t, mode));
 }
 
 // ---------- quiz state ----------
@@ -89,7 +90,7 @@ function pickRound(pool, mode, forced){
 }
 
 function start(mode, forced, replay){
-  const pool = poolTeams();
+  const pool = poolTeams(mode);
   S = {mode, pool, queue: pickRound(pool, mode, forced), i:0, score:0, streak:0, best:0, missed:[], missedOpts:{}, replay: replay||null, answered:false};
   $("sb-score").textContent = "0"; $("sb-streak").textContent = "0"; $("sb-streak").classList.remove("hot");
   $("home").classList.add("hidden"); $("results").classList.add("hidden"); $("quiz").classList.remove("hidden");
@@ -99,10 +100,10 @@ function start(mode, forced, replay){
   show();
 }
 
-function distractors(t, n, sameKeyFn){
+function distractors(t, n, mode, sameKeyFn){
   // prefer same-division teams, then others; never ambiguous ones,
   // and never two teams that share a location (e.g. both Los Angeles teams)
-  const others = TEAMS.filter(o => o !== t && o.loc !== t.loc && !sameKeyFn(o));
+  const others = TEAMS.filter(o => o !== t && canPlay(o, mode) && o.loc !== t.loc && !sameKeyFn(o));
   const sameDiv = shuffle(others.filter(o=>o.div===t.div));
   const rest = shuffle(others.filter(o=>o.div!==t.div));
   const picked = [];
@@ -138,9 +139,9 @@ function show(){
   if(mode.type==="mc"){
     $("submit").classList.add("hidden"); $("idk").classList.add("hidden");
     let ds;
-    if(mode.ans==="name") ds = distractors(t, 3, (o,p)=> p ? o.name===p.name : o.loc===t.loc);
-    else if(mode.ans==="loc") ds = distractors(t, 3, (o,p)=> p ? o.loc===p.loc : o.loc===t.loc);
-    else ds = distractors(t, 3, (o,p)=> p ? colorKey(o)===colorKey(p) : colorKey(o)===colorKey(t));
+    if(mode.ans==="name") ds = distractors(t, 3, mode, (o,p)=> p ? o.name===p.name : o.loc===t.loc);
+    else if(mode.ans==="loc") ds = distractors(t, 3, mode, (o,p)=> p ? o.loc===p.loc : o.loc===t.loc);
+    else ds = distractors(t, 3, mode, (o,p)=> p ? colorKey(o)===colorKey(p) : colorKey(o)===colorKey(t));
     const opts = (S.replay && S.replay[t.name]) || shuffle([t, ...ds]); // same choices as the missed question
     S.opts = opts;
     area.innerHTML = `<div class="options">` + opts.map((o,k)=>{
@@ -211,7 +212,7 @@ function finish(ok, idk){
   const t = S.current, id = S.mode.id;
   misses[id] = misses[id] || {};
   // flash the team's colors across the top of the card
-  const hexes = t.colors.map(c=>c.hex);
+  const hexes = t.colors ? t.colors.map(c=>c.hex) : ["#ffcf3f","#ffffff"];
   $("qcard").style.setProperty("--stripe", `linear-gradient(90deg, ${hexes.map((h,k)=>`${h} ${k/hexes.length*100}% ${(k+1)/hexes.length*100}%`).join(",")})`);
   if(ok){
     S.score++; S.streak++; S.best = Math.max(S.best, S.streak);
@@ -262,7 +263,7 @@ function results(){
   const g = LEAGUE.flavor.grades;
   $("res-grade").textContent = pct===1 ? g[4] : pct>=.8 ? g[3] : pct>=.6 ? g[2] : pct>=.4 ? g[1] : g[0];
   $("res-msg").textContent = (pct===1 ? "Perfect round!" : pct>=.7 ? "Nice work. Review the ones you missed below." : "Keep going. Missed teams will come up more often.") + (S.best>=3 ? ` Best streak: 🔥 ${S.best}` : "");
-  if(pct===1){ const all = TEAMS.flatMap(t=>t.colors.map(c=>c.hex)); confetti(all, 220); setTimeout(()=>confetti(all,160), 500); }
+  if(pct===1){ const all = TEAMS.flatMap(t=>(t.colors||[]).map(c=>c.hex)); confetti(all, 220); setTimeout(()=>confetti(all,160), 500); }
   else if(pct>=.8) confetti(["#ffcf3f","#ffffff","#3fe07f"], 90);
   $("res-missed").innerHTML = missed.map(t=>`<li><span><b>${full(t)}</b> · ${t.div}</span>${mode.group==="c"?swatchHTML(t):`<span class="sub">${t.loc}</span>`}</li>`).join("");
   $("retry-missed").classList.toggle("hidden", !missed.length);

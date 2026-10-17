@@ -63,24 +63,28 @@ function run(w, ev){
   let TEAMS = ev("TEAMS");
   const $ = id => w.document.getElementById(id);
   const colorKey = t => t.colors.map(c=>c.name).sort().join("|");
-  const full = t => `${t.loc} ${t.name}`;
+  const full = t => t.loc ? `${t.loc} ${t.name}` : t.name;
+  const canPlay = (t, m) => m.group==="c" ? !!t.colors : !!t.loc;
   const team = name => TEAMS.find(t=>t.name===name);
   const mode = id => MODES.find(m=>m.id===id);
+  const LEAGUES_SURFACE = Object.fromEntries(Object.values(w.LEAGUES).map(L=>[L.id, L.surface]));
 
   // --- multiple choice: every team, every MC mode, many shuffles (run for each league below) ---
   function mcChecks(league){
   for(const m of MODES.filter(m=>m.type==="mc")){
     const problems = [];
-    for(const t of TEAMS){
+    const playable = TEAMS.filter(t=>canPlay(t, m));
+    for(const t of playable){
       for(let r=0;r<15;r++){
         ev("start")(m, [t]);
         const opts = ev("S").opts;
         const correct = opts.filter(o=>ev("isCorrectMC")(o));
+        if(opts.some(o=>!canPlay(o, m))) problems.push(`${full(t)}: shows a team that can't play this mode (${opts.map(full).join(", ")})`);
         if(opts.length!==4) problems.push(`${full(t)}: ${opts.length} choices`);
         if(correct.length!==1) problems.push(`${full(t)}: ${correct.length} correct choices`);
         if(new Set(opts.map(o=>o.loc)).size!==4) problems.push(`${full(t)}: two choices share a location (${opts.map(full).join(", ")})`);
         if(m.group==="c" && new Set(opts.map(colorKey)).size!==4) problems.push(`${full(t)}: two choices have the same color names (${opts.map(full).join(", ")})`);
-        const sameDivAvail = TEAMS.filter(o=>o!==t && o.div===t.div && o.loc!==t.loc && colorKey(o)!==colorKey(t)).length;
+        const sameDivAvail = playable.filter(o=>o!==t && o.div===t.div && o.loc!==t.loc && (m.group!=="c" || colorKey(o)!==colorKey(t))).length;
         const sameDivUsed = opts.filter(o=>o!==t && o.div===t.div).length;
         if(sameDivUsed < Math.min(3, sameDivAvail)) problems.push(`${full(t)}: didn't prefer same-division wrong answers`);
       }
@@ -184,6 +188,36 @@ function run(w, ev){
   ];
   const badNba = nbaCases.filter(([m,t,inp,exp])=>typed(m,t,inp)!==exp);
   check(`NBA typed answers (${nbaCases.length} cases)`, !badNba.length, badNba.map(([m,t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
+  // --- MLB and NHL ---
+  for(const [lid, label, pools] of [["mlb","MLB",["All teams (30 teams)","AL (15 teams)","NL (15 teams)"]], ["nhl","NHL",["All teams (32 teams)","East (16 teams)","West (16 teams)"]]]){
+    ev("setLeague")(lid); TEAMS = ev("TEAMS");
+    check(`${label}: pools, subtitle, footer and surface`, JSON.stringify([...$("pool").options].map(o=>o.textContent))===JSON.stringify(pools)
+      && new RegExp(`endorsed by ${label}|endorsed by the ${label}`).test($("credits").textContent) && w.document.documentElement.dataset.surface===LEAGUES_SURFACE[lid]);
+    mcChecks(label);
+  }
+  ev("setLeague")("mlb"); TEAMS = ev("TEAMS");
+  const inRounds = (modeId, name) => { for(let r=0;r<30;r++){ ev("start")(mode(modeId)); if(ev("S").queue.some(t=>t.name===name)) return true; } return false; };
+  check("MLB: Athletics never asked in name/city modes, but do come up in colors modes", !inRounds("c2n-mc","Athletics") && !inRounds("n2c-tx","Athletics") && inRounds("t2col","Athletics"));
+  const mlbCases = [
+    ["c2n-tx","Yankees","Mets",true], ["c2n-tx","Cubs","White Sox",true], ["c2n-tx","Dodgers","Angels",true], ["c2n-tx","Red Sox","Sox",false],
+    ["c2n-tx","Blue Jays","bluejays",false], ["c2n-tx","Diamondbacks","D-backs",false],
+    ["n2c-tx","Cardinals","St Louis",true], ["n2c-tx","Cardinals","St. Louis",true], ["n2c-tx","Cardinals","Saint Louis",false],
+    ["n2c-tx","Rangers","Texas",true], ["n2c-tx","Rangers","Arlington",false], ["n2c-tx","Royals","KC",true], ["n2c-tx","Nationals","DC",true],
+  ];
+  const badMlb = mlbCases.filter(([m,t,inp,exp])=>typed(m,t,inp)!==exp);
+  check(`MLB typed answers (${mlbCases.length} cases)`, !badMlb.length, badMlb.map(([m,t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
+
+  ev("setLeague")("nhl"); TEAMS = ev("TEAMS");
+  check("NHL: Mammoth never asked in colors modes, but do come up in name/city modes", !inRounds("t2col","Mammoth") && !inRounds("col2t","Mammoth") && inRounds("c2n-mc","Mammoth"));
+  const nhlCases = [
+    ["n2c-tx","Canadiens","Montréal",true], ["n2c-tx","Canadiens","montreal",true], ["n2c-tx","Golden Knights","Vegas",true], ["n2c-tx","Golden Knights","Las Vegas",false],
+    ["n2c-tx","Blues","St. Louis",true], ["n2c-tx","Mammoth","Utah",true], ["n2c-tx","Kings","LA",true], ["n2c-tx","Ducks","LA",false],
+    ["c2n-tx","Rangers","Islanders",true], ["c2n-tx","Maple Leafs","Leafs",false], ["c2n-tx","Golden Knights","golden knights",true], ["c2n-tx","Canadiens","Habs",false],
+  ];
+  const badNhl = nhlCases.filter(([m,t,inp,exp])=>typed(m,t,inp)!==exp);
+  check(`NHL typed answers (${nhlCases.length} cases, accents optional)`, !badNhl.length, badNhl.map(([m,t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
+  ev("setLeague")("nba"); TEAMS = ev("TEAMS");
+
   typed("c2n-tx","Lakers","Bulls");
   check("NBA: court surface, and no 🚩 on a wrong answer", w.document.documentElement.dataset.surface==="court" && $("feedback").textContent.startsWith("Not quite."), $("feedback").textContent);
   ev("setLeague")("nfl"); TEAMS = ev("TEAMS");

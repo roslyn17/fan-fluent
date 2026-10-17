@@ -48,7 +48,7 @@ $("pool").onchange = e => store.set(LEAGUE.storage.pool, e.target.value);
 
 const leagueIds = Object.keys(LEAGUES);
 $("league-picker").classList.toggle("hidden", leagueIds.length < 2);
-$("leagues").innerHTML = leagueIds.map(id=>`<button class="league" data-id="${id}" aria-pressed="false">${LEAGUES[id].emoji} ${LEAGUES[id].label}</button>`).join("");
+$("leagues").innerHTML = leagueIds.map(id=>`<button class="league" data-id="${id}" aria-pressed="false"><span aria-hidden="true">${LEAGUES[id].emoji}</span><span>${LEAGUES[id].label}</span></button>`).join("");
 document.querySelectorAll(".league").forEach(b=>b.onclick=()=>setLeague(b.dataset.id));
 const hashLeague = () => location.hash.slice(1).toLowerCase();
 setLeague(LEAGUES[hashLeague()] ? hashLeague() : store.get("gf-league", "nfl"));

@@ -21,9 +21,9 @@ const C = (name, hex) => ({name, hex});
     // lowest to highest: <40%, 40%+, 60%+, 80%+, perfect
     grades: ["Juniors", "Rookie", "Starter", "⭐ All-Star", "🏆 Hall of Fame"],
   },
-  // Only the short forms CLAUDE.md allows: LA, NY, NYC, DC
+  // Only the short forms CLAUDE.md allows: LA, NY, NYC, DC, plus "Las Vegas" for the Golden Knights' "Vegas"
   locAliases: {
-    "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Washington": ["Washington DC", "DC"],
+    "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Washington": ["Washington DC", "DC"], "Vegas": ["Las Vegas"],
   },
   conferences: ["East", "West"],
   divisions: [

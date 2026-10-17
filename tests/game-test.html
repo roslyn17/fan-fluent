@@ -210,7 +210,7 @@ function run(w, ev){
   ev("setLeague")("nhl"); TEAMS = ev("TEAMS");
   check("NHL: Mammoth never asked in colors modes, but do come up in name/city modes", !inRounds("t2col","Mammoth") && !inRounds("col2t","Mammoth") && inRounds("c2n-mc","Mammoth"));
   const nhlCases = [
-    ["n2c-tx","Canadiens","Montréal",true], ["n2c-tx","Canadiens","montreal",true], ["n2c-tx","Golden Knights","Vegas",true], ["n2c-tx","Golden Knights","Las Vegas",false],
+    ["n2c-tx","Canadiens","Montréal",true], ["n2c-tx","Canadiens","montreal",true], ["n2c-tx","Golden Knights","Vegas",true], ["n2c-tx","Golden Knights","Las Vegas",true], ["n2c-tx","Golden Knights","LV",false],
     ["n2c-tx","Blues","St. Louis",true], ["n2c-tx","Mammoth","Utah",true], ["n2c-tx","Kings","LA",true], ["n2c-tx","Ducks","LA",false],
     ["c2n-tx","Rangers","Islanders",true], ["c2n-tx","Maple Leafs","Leafs",false], ["c2n-tx","Golden Knights","golden knights",true], ["c2n-tx","Canadiens","Habs",false],
   ];

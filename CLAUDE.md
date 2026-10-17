@@ -60,6 +60,7 @@ Same rules as the NFL unless listed here.
 - **Team names, locations, conferences and divisions:** NHL.com (https://www.nhl.com/info/teams). Locations keep NHL.com's spelling, including "Montréal" and "Vegas."
 - **Colors:** TeamColorCodes.com (https://teamcolorcodes.com/nhl-team-color-codes/), primary colors only (2–3 per team), simple names. Use each team page's current primary colors (the "colors HEX codes are…" summary), not the historical ones listed below them.
 - **Utah Mammoth:** TeamColorCodes has no page for them and the team hasn't published hex codes, so `colors` is `null` and they appear only in the name and city modes. Add colors once a source exists.
+- **Golden Knights:** location is "Vegas" (NHL.com's spelling); typing "Las Vegas" is also accepted.
 - Shared locations: New York (Rangers, Islanders).
 - Pool filter options: **All teams (32 teams), East (16 teams), West (16 teams).**
 
@@ -119,6 +120,6 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
 ## Decisions
 
 - The product name stays "Fan Fluent" for every league (not "Fan Fluent: NBA").
-- Short forms are a fixed, shared list; "OKC" was added for the NBA. Informal ones (Philly, Vegas, Indy) stay rejected. ("Vegas" is accepted for the NHL's Golden Knights only because it's their official location.)
+- Short forms are a fixed, shared list; "OKC" was added for the NBA. Informal ones (Philly, Vegas, Indy) stay rejected. For the NHL's Golden Knights, both "Vegas" (their official location) and "Las Vegas" are accepted.
 - Each league gets its own surface (look), not a reused one.
 - MLS is on hold: many club names don't split into "Location ____" (FC Cincinnati, Real Salt Lake, LAFC, Austin FC), so the name/city modes need a rule before MLS can be added.

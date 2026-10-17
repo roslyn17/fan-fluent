@@ -60,7 +60,7 @@ Same rules as the NFL unless listed here.
 - **Team names, locations, conferences and divisions:** NHL.com (https://www.nhl.com/info/teams). Locations keep NHL.com's spelling, including "Montréal" and "Vegas."
 - **Colors:** TeamColorCodes.com (https://teamcolorcodes.com/nhl-team-color-codes/), primary colors only (2–3 per team), simple names. Use each team page's current primary colors (the "colors HEX codes are…" summary), not the historical ones listed below them.
 - **Utah Mammoth:** TeamColorCodes has no page for them and the team hasn't published hex codes, so `colors` is `null` and they appear only in the name and city modes. Add colors once a source exists.
-- **Golden Knights:** location is "Vegas" (NHL.com's spelling); typing "Las Vegas" is also accepted.
+- **Golden Knights:** location is "Vegas" (NHL.com's spelling); typing "Las Vegas" is also accepted (and "Vegas" works for the NFL's Las Vegas Raiders).
 - Shared locations: New York (Rangers, Islanders).
 - Pool filter options: **All teams (32 teams), East (16 teams), West (16 teams).**
 
@@ -86,7 +86,7 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
 ## Answer checking (typing modes)
 
 - **Team names:** exact spelling, ignoring only capitalization and extra spaces. Accept "Packers" or "Green Bay Packers." Don't accept nicknames ("Pack," "Niners," "Bucs") or near-miss spellings.
-- **Locations:** exact spelling, ignoring capitalization, spaces, periods, commas and accents ("Montreal" matches "Montréal"). The only short forms accepted are LA, NY, NYC, KC, SF, OKC and DC / Washington DC. Don't accept informal ones such as Philly, Vegas or Indy.
+- **Locations:** exact spelling, ignoring capitalization, spaces, periods, commas and accents ("Montreal" matches "Montréal"). The only short forms accepted are LA, NY, NYC, KC, SF, OKC and DC / Washington DC. "Vegas" and "Las Vegas" are interchangeable (Raiders and Golden Knights). Don't accept informal ones such as Philly or Indy.
 - An **IDK** button appears in typing modes only. It reveals the answer with a gentle message (no flag animation or shake), counts as a miss and resets the streak.
 
 ## Rounds and progress
@@ -120,6 +120,6 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
 ## Decisions
 
 - The product name stays "Fan Fluent" for every league (not "Fan Fluent: NBA").
-- Short forms are a fixed, shared list; "OKC" was added for the NBA. Informal ones (Philly, Vegas, Indy) stay rejected. For the NHL's Golden Knights, both "Vegas" (their official location) and "Las Vegas" are accepted.
+- Short forms are a fixed, shared list; "OKC" was added for the NBA. Informal ones (Philly, Indy) stay rejected. "Vegas" and "Las Vegas" both work for both Las Vegas teams (NFL Raiders, NHL Golden Knights), whichever one is the official location.
 - Each league gets its own surface (look), not a reused one.
 - MLS is on hold: many club names don't split into "Location ____" (FC Cincinnati, Real Salt Lake, LAFC, Austin FC), so the name/city modes need a rule before MLS can be added.

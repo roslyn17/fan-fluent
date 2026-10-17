@@ -25,7 +25,7 @@ const C = (name, hex) => ({name, hex});
   // Official short forms only (periods and commas ignored, so "L.A." also works)
   locAliases: {
     "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Kansas City": ["KC"], "San Francisco": ["SF"],
-    "Washington": ["Washington DC", "DC"],
+    "Washington": ["Washington DC", "DC"], "Las Vegas": ["Vegas"],
   },
   conferences: ["AFC", "NFC"],
   divisions: [

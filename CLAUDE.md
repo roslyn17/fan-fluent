@@ -136,6 +136,7 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
 
 - The product name stays "Fan Fluent" for every league (not "Fan Fluent: NBA").
 - Short forms are a fixed, shared list; "OKC" was added for the NBA. Informal ones (Philly, Indy) stay rejected. "Vegas" and "Las Vegas" both work for every Las Vegas team (NFL Raiders, WNBA Aces, NHL Golden Knights), whichever one is the official location.
+- Every hex code comes from a source (TeamColorCodes.com unless a league's rules say otherwise). Teams whose colors are announced but have no published hex codes (Utah Mammoth, Golden State Valkyries, Toronto Tempo, Portland Fire) stay out of the colors modes until TeamColorCodes adds them. Don't approximate hex codes from logos or photos.
 - Each league gets its own surface (look), not a reused one, and it must be clearly distinct (MLB and NHL were redesigned because they looked too close to the NFL and the other night themes).
 - NWSL is on hold for the same reason as MLS (Angel City FC, Bay FC, Gotham FC, Racing Louisville FC don't split). When it's added, its pool filter is "All teams" only, since the league has one table with no conferences.
 - MLS is on hold: many club names don't split into "Location ____" (FC Cincinnati, Real Salt Lake, LAFC, Austin FC), so the name/city modes need a rule before MLS can be added.

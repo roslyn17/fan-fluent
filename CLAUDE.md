@@ -48,6 +48,7 @@ Same rules as the NFL unless listed here.
 
 - **Team names, locations and conferences:** WNBA.com (https://www.wnba.com/teams). The WNBA has no divisions, so each conference is also used as the division: wrong answers come from the same conference first.
 - **Colors:** TeamColorCodes.com (https://teamcolorcodes.com/wnba-color-codes/), primary colors only (2–3 per team), simple names.
+  - Deliberate picks: the Sun are orange, navy and white; the Dream are red, grey and light blue. The Dream's grey is TeamColorCodes' pale blue-grey #CED9E5 (listed there as "light blue"), and their light blue is #418FDE (listed as "blue").
 - **Golden State Valkyries, Toronto Tempo and Portland Fire** (2025–26 expansion): TeamColorCodes has no pages for them yet, so `colors` is `null` and they appear only in the name and city modes. Add colors once a source exists. (The Cleveland Sirens start in 2028; add them then.)
 - Pool filter options: **All teams (15 teams), Eastern Conference (7 teams), Western Conference (8 teams).**
 

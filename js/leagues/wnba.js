@@ -30,9 +30,11 @@ const C = (name, hex) => ({name, hex});
   confNames: {East: "Eastern Conference", West: "Western Conference"},
   divisions: [
     {conf: "East", name: "Eastern Conference", teams: [
-      {name: "Dream", loc: "Atlanta", colors: [C("red", "#C8102E"), C("light blue", "#418FDE"), C("navy", "#0C2340")]},
+      // Deliberate pick: red, grey, light blue. The grey is TeamColorCodes' pale blue-grey #CED9E5 (listed there as "light blue")
+      {name: "Dream", loc: "Atlanta", colors: [C("red", "#C8102E"), C("grey", "#CED9E5"), C("light blue", "#418FDE")]},
       {name: "Sky", loc: "Chicago", colors: [C("yellow", "#FFCD00"), C("light blue", "#418FDE")]},
-      {name: "Sun", loc: "Connecticut", colors: [C("red", "#A6192E"), C("navy", "#041E42"), C("orange", "#DC4405")]},
+      // Deliberate pick: orange, navy, white (TeamColorCodes lists red first)
+      {name: "Sun", loc: "Connecticut", colors: [C("orange", "#DC4405"), C("navy", "#041E42"), C("white", "#FFFFFF")]},
       {name: "Fever", loc: "Indiana", colors: [C("red", "#C8102E"), C("navy", "#041E42"), C("yellow", "#FFCD00")]},
       {name: "Liberty", loc: "New York", colors: [C("seafoam", "#6ECEB2"), C("black", "#000000"), C("orange", "#FF671F")]},
       {name: "Tempo", loc: "Toronto", colors: null},

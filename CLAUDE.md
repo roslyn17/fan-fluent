@@ -15,6 +15,13 @@ The app is plain HTML, CSS and JavaScript with no build step and no dependencies
 
 The original single-file prototype (`fan-fluent.html`) is in the first git commit.
 
+## Hosting
+
+- **Code:** https://github.com/roslyn17/fan-fluent (public). `main` is the production branch.
+- **Live site:** https://fan-fluent.vercel.app, on Vercel (team `roslyn1`, project `fan-fluent`, Hobby plan). Framework preset "Other": no build step, served from the project root.
+- **Deploys are automatic:** every push to `main` goes live in under a minute. Every other branch gets its own preview address (only visible to the Vercel account owner), which is the place to review looks or data changes before merging.
+- `.vercel/` and `.env*` are git-ignored; `vercel link` stores a token in `.env.local`, which must never be committed.
+
 ## Hard requirements
 
 - **No accounts and no backend.** Everything runs in the browser. Progress, such as missed-team weights and the selected pool, goes in `localStorage`. Every storage read and write is wrapped in try/catch, and the app must still work if storage is unavailable.

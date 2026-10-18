@@ -5,7 +5,7 @@ A no-account webapp for learning sports teams: names, locations and colors. It s
 The app is plain HTML, CSS and JavaScript with no build step and no dependencies apart from Google Fonts. Treat the code as the source of truth for current behavior:
 
 - `index.html`: page markup. Run `python3 serve.py` and open http://localhost:8173 (or open the file directly).
-- `serve.py`: local dev server (standard library only). Like `python3 -m http.server`, but it tells the browser not to cache files, so edits always show up on a normal refresh. Prefer it over `http.server`, which let browsers show stale scripts.
+- `serve.py`: local dev server (standard library only). Like `python3 -m http.server`, but it tells the browser not to cache files, so edits always show up on a normal refresh. Prefer it over `http.server`, which let browsers show stale scripts. The `?v=2` on the CSS and JS links in `index.html` gives them fresh addresses so browsers that saved older copies load the new ones; bump the number if someone reports seeing an old version.
 - `css/styles.css`: all styles.
 - `js/leagues/<league>.js`: one data file per league (`nfl.js`, `nba.js`, `wnba.js`, `mlb.js`, `nhl.js`): teams grouped by division and conference, location short forms, credits and disclaimer, sport flavor text (pop-ups, grades), and its `localStorage` keys. Adding a league should only need a new file here plus a `<script>` tag.
 - `js/modes.js`: the 6 game modes, shared by every league.

@@ -112,7 +112,7 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
 ## Look and feel
 
 - Stadium-at-night theme: floodlight glows, the Bebas Neue display font with Inter for body text, and LED-yellow accents.
-- A league picker (one button per league, on one row even on phones, where the emoji sits above the name) sits at the top of the home screen. The choice is remembered in `localStorage` and shown in the URL (`#nfl`, `#nba`, `#wnba`, `#mlb`, `#nhl`); editing the hash switches league. Each league has its own missed-team weights and pool selection.
+- A league picker (one button per league, in alphabetical order: MLB, NBA, NFL, NHL, WNBA; on one row even on phones, where the emoji sits above the name) sits at the top of the home screen. The order comes from the order of the league `<script>` tags in `index.html`, so keep those alphabetical. New visitors start on the NFL. The choice is remembered in `localStorage` and shown in the URL (`#nfl`, `#nba`, `#wnba`, `#mlb`, `#nhl`); editing the hash switches league. Each league has its own missed-team weights and pool selection.
 - Each league has a **surface** (`surface` in its league file, styles in `css/styles.css`):
   - `field` (NFL): turf background with yard lines, and a football-field progress bar with a 🏈 that advances.
   - `court` (NBA): dark hardwood background with a half-court line and center circle, and a court progress bar (painted keys at both ends, half-court line) with a 🏀.

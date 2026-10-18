@@ -8,7 +8,7 @@ const C = (name, hex) => ({name, hex});
   label: "NBA",
   sport: "Basketball",
   emoji: "🏀",
-  surface: "court", // background and progress-bar theme (see css/styles.css)
+  surface: "maple", // background and progress-bar theme (see css/styles.css)
   credits: "Team names, locations and conferences per NBA.com. Colors per TeamColorCodes.com (primary colors only).",
   disclaimer: "Not affiliated with or endorsed by the NBA or any of its teams.",
   storage: {misses: "gf-nba-misses", pool: "gf-nba-pool"},

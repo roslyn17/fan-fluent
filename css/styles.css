@@ -98,63 +98,64 @@ input[type=text]:focus{outline:none;border-color:var(--led);box-shadow:0 0 0 4px
 .hidden{display:none!important}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
-/* basketball (league surface "court"): arena-at-night hardwood */
-html[data-surface="court"]{background:#24150a}
-[data-surface="court"] body{
-  background:
-    radial-gradient(ellipse 70% 38% at 18% -6%, rgba(255,240,215,.28), transparent 70%),
-    radial-gradient(ellipse 70% 38% at 82% -6%, rgba(255,240,215,.28), transparent 70%),
-    radial-gradient(circle at 50% 46%, transparent 0 157px, rgba(255,255,255,.10) 157px 160px, transparent 160px),
-    linear-gradient(180deg, transparent calc(46% - 1px), rgba(255,255,255,.10) calc(46% - 1px) calc(46% + 1px), transparent calc(46% + 1px)),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.24) 0 1px, transparent 1px 44px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 44px, transparent 44px 88px),
-    linear-gradient(180deg, #5a3519, #3d2310 40%, #24150a);
-  background-attachment:fixed;
-}
-[data-surface="court"] .field{
-  background:
-    radial-gradient(circle at 50% 50%, transparent 0 10px, rgba(255,255,255,.8) 10px 12px, transparent 12px),
-    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255,255,255,.8) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
-    linear-gradient(#1f3a68,#1f3a68) left center / 12% 60% no-repeat,
-    linear-gradient(#1f3a68,#1f3a68) right center / 12% 60% no-repeat,
-    repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 1px, transparent 1px 22px),
-    linear-gradient(180deg, #d79a5e, #c4874d);
-}
-/* women's basketball (league surface "maple"): warm horizontal planks, one spotlight, 3-point arc at the bottom */
-html[data-surface="maple"]{background:#2a160b}
+/* basketball (league surface "maple"): a light theme. Bright maple floor with plank seams and an orange key and
+   3-point arc at the bottom, so text sitting directly on the background is dark brown and panels are solid */
+html[data-surface="maple"]{background:#ddb37c}
+[data-surface="maple"]{--panel:#2a1a10}
 [data-surface="maple"] body{
   background:
-    radial-gradient(ellipse 60% 34% at 50% -8%, rgba(255,236,205,.34), transparent 72%),
-    radial-gradient(ellipse 52% 30% at 50% 104%, transparent 0 96%, rgba(255,255,255,.14) 96% 98%, transparent 98%),
-    linear-gradient(90deg, transparent calc(50% - 64px), rgba(14,124,134,.30) calc(50% - 64px) calc(50% + 64px), transparent calc(50% + 64px)) bottom / 100% 22% no-repeat,
-    repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 38px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 140px, transparent 140px 260px),
-    linear-gradient(180deg, #7a4a24, #55321a 45%, #2a160b);
+    radial-gradient(ellipse 70% 30% at 50% -6%, rgba(255,255,255,.55), transparent 70%),
+    radial-gradient(circle at 50% 108%, transparent 0 150px, rgba(224,89,42,.85) 150px 154px, transparent 154px),
+    linear-gradient(90deg, transparent calc(50% - 70px), rgba(224,89,42,.22) calc(50% - 70px) calc(50% + 70px), transparent calc(50% + 70px)) bottom / 100% 14% no-repeat,
+    repeating-linear-gradient(180deg, rgba(120,70,30,.16) 0 1px, transparent 1px 30px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 180px, rgba(120,70,30,.05) 180px 330px),
+    linear-gradient(180deg, #f1d3a6, #e7c391 50%, #ddb37c);
   background-attachment:fixed;
 }
+[data-surface="maple"] h1, [data-surface="maple"] .section-label, [data-surface="maple"] #quiz-title{color:#2a1a10;text-shadow:none}
+[data-surface="maple"] h1 span{color:#d24e1c}
+[data-surface="maple"] header .sub, [data-surface="maple"] footer{color:#5b3d26}
+[data-surface="maple"] .section-label::after{background:rgba(42,26,16,.2)}
+[data-surface="maple"] .league[aria-pressed="true"]{background:linear-gradient(rgba(255,207,63,.16),rgba(255,207,63,.16)),#2a1a10}
 [data-surface="maple"] .field{
+  border-color:#2a1a10;
   background:
-    radial-gradient(ellipse 22% 120% at 0 50%, transparent 0 95%, rgba(255,255,255,.85) 95% 100%, transparent 100%),
-    radial-gradient(ellipse 22% 120% at 100% 50%, transparent 0 95%, rgba(255,255,255,.85) 95% 100%, transparent 100%),
-    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255,255,255,.8) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
-    linear-gradient(#0e7c86,#0e7c86) left center / 11% 60% no-repeat,
-    linear-gradient(#0e7c86,#0e7c86) right center / 11% 60% no-repeat,
-    repeating-linear-gradient(180deg, rgba(0,0,0,.10) 0 1px, transparent 1px 8px),
-    linear-gradient(180deg, #e8b981, #d9a466);
+    radial-gradient(circle at 50% 50%, transparent 0 10px, rgba(255,255,255,.85) 10px 12px, transparent 12px),
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255,255,255,.85) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(#e0592a,#e0592a) left center / 12% 60% no-repeat,
+    linear-gradient(#e0592a,#e0592a) right center / 12% 60% no-repeat,
+    repeating-linear-gradient(90deg, rgba(120,70,30,.14) 0 1px, transparent 1px 22px),
+    linear-gradient(180deg, #f1d3a6, #e2bb85);
 }
 
-/* baseball (league surface "diamond"): ballpark at dusk. Sunset sky, green outfield wall with a yellow line,
-   then a warm clay infield with chalk foul lines */
-html[data-surface="diamond"]{background:#4a2414}
+/* women's basketball (league surface "seams"): deep plum with a big orange basketball peeking in from the bottom corner */
+html[data-surface="seams"]{background:#160a1c}
+[data-surface="seams"] body{
+  background:
+    radial-gradient(ellipse 60% 30% at 50% -6%, rgba(255,160,90,.20), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E %3Cg fill='none' stroke='rgba(255,122,48,0.55)' stroke-width='5'%3E %3Ccircle cx='200' cy='200' r='190'/%3E%3Cpath d='M10 200 H390'/%3E%3Cpath d='M200 10 V390'/%3E %3Cpath d='M66 66 C150 140 150 260 66 334'/%3E%3Cpath d='M334 66 C250 140 250 260 334 334'/%3E %3C/g%3E%3C/svg%3E") right -170px bottom -150px / 460px 460px no-repeat,
+    linear-gradient(180deg, #33133d, #241029 50%, #160a1c);
+  background-attachment:fixed;
+}
+[data-surface="seams"] .field{
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 10px, rgba(255,122,48,.9) 10px 12px, transparent 12px),
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255,122,48,.9) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+    radial-gradient(ellipse 22% 120% at 0 50%, transparent 0 95%, rgba(255,122,48,.9) 95% 100%, transparent 100%),
+    radial-gradient(ellipse 22% 120% at 100% 50%, transparent 0 95%, rgba(255,122,48,.9) 95% 100%, transparent 100%),
+    linear-gradient(180deg, #3d1848, #2a1032);
+}
+
+/* baseball (league surface "diamond"): a big infield diamond (bases, dirt, mound) rising from the bottom
+   under a night-into-sunset sky */
+html[data-surface="diamond"]{background:#7a3446}
 [data-surface="diamond"] body{
   background:
-    radial-gradient(ellipse 40% 22% at 12% 0, rgba(255,236,190,.32), transparent 70%),
-    radial-gradient(ellipse 40% 22% at 88% 0, rgba(255,236,190,.32), transparent 70%),
-    linear-gradient(180deg, transparent 0 30%, #f2c230 30% calc(30% + 3px), #12432f calc(30% + 3px) 37%, #0b2e20 37% 38%, transparent 38%),
-    linear-gradient(56deg, transparent calc(50% - 1px), rgba(255,255,255,.22) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)) right bottom / 50% 62% no-repeat,
-    linear-gradient(-56deg, transparent calc(50% - 1px), rgba(255,255,255,.22) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)) left bottom / 50% 62% no-repeat,
-    radial-gradient(rgba(0,0,0,.10) 1px, transparent 1.5px) 0 0 / 7px 7px,
-    linear-gradient(180deg, #241a46 0%, #5a2a5a 14%, #a8473f 26%, #c96a3c 30%, #94502e 38%, #7a3f24 62%, #4a2414 100%);
+    radial-gradient(ellipse 34% 14% at 10% 0, rgba(255,240,210,.30), transparent 70%),
+    radial-gradient(ellipse 34% 14% at 90% 0, rgba(255,240,210,.30), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E %3Cpath d='M200 40 L360 200 L200 360 L40 200 Z' fill='rgba(176,112,63,0.34)' stroke='rgba(255,255,255,0.38)' stroke-width='3'/%3E %3Cpath d='M200 120 L280 200 L200 280 L120 200 Z' fill='rgba(40,110,58,0.55)'/%3E %3Ccircle cx='200' cy='200' r='16' fill='rgba(176,112,63,0.6)'/%3E %3Crect x='192' y='32' width='16' height='16' fill='white' transform='rotate(45 200 40)'/%3E %3Crect x='352' y='192' width='16' height='16' fill='white' transform='rotate(45 360 200)'/%3E %3Crect x='32' y='192' width='16' height='16' fill='white' transform='rotate(45 40 200)'/%3E %3Cpath d='M190 352 L210 352 L210 362 L200 370 L190 362 Z' fill='white'/%3E %3C/svg%3E") center bottom -140px / 560px 560px no-repeat,
+    radial-gradient(ellipse 90% 40% at 50% 104%, rgba(255,150,80,.38), transparent 70%),
+    linear-gradient(180deg, #0a1030 0%, #18194a 30%, #3a1f55 55%, #6a2c52 78%, #8a3a46 100%);
   background-attachment:fixed;
 }
 [data-surface="diamond"] .field{
@@ -166,7 +167,7 @@ html[data-surface="diamond"]{background:#4a2414}
     linear-gradient(180deg, #2f7a3a 0 20%, #b0703f 20% 80%, #2f7a3a 80%);
 }
 
-/* hockey (league surface "ice"): the only light theme. A bright ice sheet with red and blue lines,
+/* hockey (league surface "ice"): a light theme (cool, vs. the NBA's warm maple). A bright ice sheet with red and blue lines,
    so text sitting directly on the background switches to dark navy */
 html[data-surface="ice"]{background:#d3e4ef}
 [data-surface="ice"]{--panel:#122331}

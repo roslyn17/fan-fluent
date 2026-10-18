@@ -10,7 +10,7 @@ const C = (name, hex) => ({name, hex});
   label: "WNBA",
   sport: "Basketball",
   emoji: "🏀",
-  surface: "maple", // background and progress-bar theme (see css/styles.css)
+  surface: "seams", // background and progress-bar theme (see css/styles.css)
   credits: "Team names, locations and conferences per WNBA.com. Colors per TeamColorCodes.com (primary colors only).",
   disclaimer: "Not affiliated with or endorsed by the WNBA or any of its teams.",
   storage: {misses: "gf-wnba-misses", pool: "gf-wnba-pool"},

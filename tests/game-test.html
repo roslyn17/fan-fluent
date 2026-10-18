@@ -229,7 +229,7 @@ function run(w, ev){
   ev("setLeague")("nba"); TEAMS = ev("TEAMS");
 
   typed("c2n-tx","Lakers","Bulls");
-  check("NBA: court surface, and no 🚩 on a wrong answer", w.document.documentElement.dataset.surface==="court" && $("feedback").textContent.startsWith("Not quite."), $("feedback").textContent);
+  check("NBA: maple surface, and no 🚩 on a wrong answer", w.document.documentElement.dataset.surface==="maple" && $("feedback").textContent.startsWith("Not quite."), $("feedback").textContent);
   ev("setLeague")("nfl"); TEAMS = ev("TEAMS");
   typed("c2n-tx","Bills","Jets");
   check("NFL: field surface, and 🚩 on a wrong answer", w.document.documentElement.dataset.surface==="field" && $("feedback").textContent.startsWith("🚩 Not quite."), $("feedback").textContent);

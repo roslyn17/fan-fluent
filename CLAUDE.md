@@ -29,7 +29,7 @@ The original single-file prototype (`fan-fluent.html`) is in the first git commi
 - **Colors:** TeamColorCodes.com (https://teamcolorcodes.com/nfl-team-color-codes/), using **primary colors only (2–3 per team)**. Don't show the full official lists anywhere.
   - Deliberate exceptions: the Colts are blue and white, and the Jets are green and white, because those are what fans recognize.
   - Colors use simple names such as "navy," "gray" and "Honolulu blue."
-- Pool filter options: **All teams (32 teams), AFC (16 teams), NFC (16 teams).** Don't add division filters.
+- Pool filter options: **All teams (32 teams), American Football Conference (16 teams), National Football Conference (16 teams).** Don't add division filters. Division names stay in their official short form ("AFC East").
 
 ## Data rules (NBA)
 
@@ -40,7 +40,7 @@ Same rules as the NFL unless listed here.
   - Deliberate exception: the Celtics are green and white, because that's what fans recognize.
   - The Jazz use their current palette (purple, black, sky blue). TeamColorCodes' main Jazz list is still the old navy / green / yellow, so the purple (#3E2680) and sky blue (#6CAEDF) hex codes come from its 2004–2010 Jazz colors on the same page. The team hasn't published official hex codes.
 - **Clippers:** location is "Los Angeles" (NBA.com brands them "LA Clippers"), so they share a location with the Lakers. Typing "LA" is accepted.
-- Pool filter options: **All teams (30 teams), East (15 teams), West (15 teams).**
+- Pool filter options: **All teams (30 teams), Eastern Conference (15 teams), Western Conference (15 teams).**
 
 ## Data rules (WNBA)
 
@@ -49,7 +49,7 @@ Same rules as the NFL unless listed here.
 - **Team names, locations and conferences:** WNBA.com (https://www.wnba.com/teams). The WNBA has no divisions, so each conference is also used as the division: wrong answers come from the same conference first.
 - **Colors:** TeamColorCodes.com (https://teamcolorcodes.com/wnba-color-codes/), primary colors only (2–3 per team), simple names.
 - **Golden State Valkyries, Toronto Tempo and Portland Fire** (2025–26 expansion): TeamColorCodes has no pages for them yet, so `colors` is `null` and they appear only in the name and city modes. Add colors once a source exists. (The Cleveland Sirens start in 2028; add them then.)
-- Pool filter options: **All teams (15 teams), East (7 teams), West (8 teams).**
+- Pool filter options: **All teams (15 teams), Eastern Conference (7 teams), Western Conference (8 teams).**
 
 ## Data rules (MLB)
 
@@ -60,7 +60,7 @@ Same rules as the NFL unless listed here.
   - Deliberate exceptions: the Yankees are navy and white, and the Dodgers are Dodger blue and white, because those are what fans recognize.
 - **Athletics:** their branding has no location, so `loc` is `null` and they appear only in the colors modes, as "Athletics."
 - Shared locations: New York (Yankees, Mets), Chicago (Cubs, White Sox), Los Angeles (Angels, Dodgers).
-- Pool filter options: **All teams (30 teams), AL (15 teams), NL (15 teams).**
+- Pool filter options: **All teams (30 teams), American League (15 teams), National League (15 teams).** Divisions use full names too ("American League East").
 
 ## Data rules (NHL)
 
@@ -71,7 +71,11 @@ Same rules as the NFL unless listed here.
 - **Utah Mammoth:** TeamColorCodes has no page for them and the team hasn't published hex codes, so `colors` is `null` and they appear only in the name and city modes. Add colors once a source exists.
 - **Golden Knights:** location is "Vegas" (NHL.com's spelling); typing "Las Vegas" is also accepted (and "Vegas" works for the NFL's Las Vegas Raiders).
 - Shared locations: New York (Rangers, Islanders).
-- Pool filter options: **All teams (32 teams), East (16 teams), West (16 teams).**
+- Pool filter options: **All teams (32 teams), Eastern Conference (16 teams), Western Conference (16 teams).**
+
+## Conference names
+
+Pool filters always show the full conference or league name (each league file's `confNames`), never the abbreviation: "American League," not "AL."
 
 ## Partly playable teams
 
@@ -113,8 +117,9 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
   - `field` (NFL): turf background with yard lines, and a football-field progress bar with a 🏈 that advances.
   - `court` (NBA): dark hardwood background with a half-court line and center circle, and a court progress bar (painted keys at both ends, half-court line) with a 🏀.
   - `maple` (WNBA): warm horizontal hardwood planks under one spotlight, with a three-point arc and teal key at the bottom, and a court progress bar (teal keys, three-point arcs, half-court line) with a 🏀.
-  - `diamond` (MLB): ballpark at night, with mowed outfield grass in a crosshatch pattern and infield dirt at the bottom, and a base-path progress bar (foul lines and three bases) with a ⚾.
-  - `ice` (NHL): dark rink under arena lights, with faint red and blue lines and a center circle, and an ice progress bar (red goal lines, blue lines, red center line and faceoff circle) with a 🏒.
+  - `diamond` (MLB): ballpark at dusk: a sunset sky with stadium-light glows, a green outfield wall with a yellow line, and a warm clay infield with chalk foul lines. Base-path progress bar (foul lines and three bases) with a ⚾.
+  - `ice` (NHL): the only **light** theme: a bright ice sheet with red center line, blue lines and a red center circle. Text that sits directly on the background is dark navy (title "Fluent" in red) and panels are solid navy. Ice progress bar (red goal lines, blue lines, red center line and faceoff circle) with a 🏒.
+  - Every surface must look clearly different from the others; check new ones side by side with the existing ones.
 - Scoreboard (score, play number, streak, which turns "hot" at 3 or more in a row).
 - Correct answer: a pop-up from the league's flavor text, confetti in the team's colors, and the team's colors along the top edge of the card. NFL: "TOUCHDOWN!", "FIRST DOWN!", "NICE CATCH!", "+1". NBA: "SWISH!", "BUCKET!", "AND ONE!", "+2". WNBA: "SWISH!", "NOTHING BUT NET!", "AND ONE!", "+2". MLB: "HOME RUN!", "BASE HIT!", "SAFE!", "+1". NHL: "GOAL!", "TOP SHELF!", "SNIPE!", "+1". Streaks of 3+: "ON FIRE!" ("HAT TRICK!" in the NHL).
 - Wrong answer: a shake plus a pop-up. NFL: "🚩 FLAG!", "INCOMPLETE" or "FUMBLE!", and the message starts with 🚩. NBA: "AIRBALL!", "BRICK!" or "TURNOVER!"; WNBA: "AIRBALL!", "BRICK!" or "SHOT CLOCK!"; MLB: "STRIKE!", "OUT!" or "FOUL BALL!"; NHL: "ICING!", "OFFSIDE!" or "PENALTY!". Only the NFL message starts with 🚩.
@@ -131,6 +136,6 @@ A team with `loc: null` sits out the 4 name/city modes; a team with `colors: nul
 
 - The product name stays "Fan Fluent" for every league (not "Fan Fluent: NBA").
 - Short forms are a fixed, shared list; "OKC" was added for the NBA. Informal ones (Philly, Indy) stay rejected. "Vegas" and "Las Vegas" both work for every Las Vegas team (NFL Raiders, WNBA Aces, NHL Golden Knights), whichever one is the official location.
-- Each league gets its own surface (look), not a reused one.
+- Each league gets its own surface (look), not a reused one, and it must be clearly distinct (MLB and NHL were redesigned because they looked too close to the NFL and the other night themes).
 - NWSL is on hold for the same reason as MLS (Angel City FC, Bay FC, Gotham FC, Racing Louisville FC don't split). When it's added, its pool filter is "All teams" only, since the league has one table with no conferences.
 - MLS is on hold: many club names don't split into "Location ____" (FC Cincinnati, Real Salt Lake, LAFC, Austin FC), so the name/city modes need a rule before MLS can be added.

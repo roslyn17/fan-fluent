@@ -25,6 +25,7 @@ const C = (name, hex) => ({name, hex});
     "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Oklahoma City": ["OKC"], "Washington": ["Washington DC", "DC"],
   },
   conferences: ["East", "West"],
+  confNames: {East: "Eastern Conference", West: "Western Conference"},
   divisions: [
     {conf: "East", name: "Atlantic", teams: [
       {name: "Celtics", loc: "Boston", colors: [C("green", "#007A33"), C("white", "#FFFFFF")]}, // fan-recognized exception (source lists gold, brown, black too)

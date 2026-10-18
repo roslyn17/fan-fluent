@@ -27,8 +27,9 @@ const C = (name, hex) => ({name, hex});
     "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Washington": ["Washington DC", "DC"], "Las Vegas": ["Vegas"],
   },
   conferences: ["East", "West"],
+  confNames: {East: "Eastern Conference", West: "Western Conference"},
   divisions: [
-    {conf: "East", name: "East", teams: [
+    {conf: "East", name: "Eastern Conference", teams: [
       {name: "Dream", loc: "Atlanta", colors: [C("red", "#C8102E"), C("light blue", "#418FDE"), C("navy", "#0C2340")]},
       {name: "Sky", loc: "Chicago", colors: [C("yellow", "#FFCD00"), C("light blue", "#418FDE")]},
       {name: "Sun", loc: "Connecticut", colors: [C("red", "#A6192E"), C("navy", "#041E42"), C("orange", "#DC4405")]},
@@ -37,7 +38,7 @@ const C = (name, hex) => ({name, hex});
       {name: "Tempo", loc: "Toronto", colors: null},
       {name: "Mystics", loc: "Washington", colors: [C("navy", "#0C2340"), C("red", "#C8102E")]},
     ]},
-    {conf: "West", name: "West", teams: [
+    {conf: "West", name: "Western Conference", teams: [
       {name: "Wings", loc: "Dallas", colors: [C("navy", "#0C2340"), C("volt green", "#C4D600"), C("light blue", "#00A9E0")]},
       {name: "Valkyries", loc: "Golden State", colors: null},
       {name: "Aces", loc: "Las Vegas", colors: [C("red", "#BA0C2F"), C("black", "#000000"), C("gold", "#85714D")]},

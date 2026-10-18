@@ -39,7 +39,7 @@ function setLeague(id){
   $("ball").textContent = LEAGUE.emoji;
   document.documentElement.dataset.surface = LEAGUE.surface || "field";
   const pools = [["all",`All teams (${TEAMS.length} teams)`]];
-  LEAGUE.conferences.forEach(c=>pools.push([c,`${c} (${TEAMS.filter(t=>t.conf===c).length} teams)`]));
+  LEAGUE.conferences.forEach(c=>pools.push([c,`${LEAGUE.confNames[c]} (${TEAMS.filter(t=>t.conf===c).length} teams)`]));
   $("pool").innerHTML = pools.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
   const savedPool = store.get(LEAGUE.storage.pool,"all");
   $("pool").value = pools.some(([v])=>v===savedPool) ? savedPool : "all";

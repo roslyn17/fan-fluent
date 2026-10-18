@@ -15,10 +15,11 @@ const dupes = arr => [...new Set(arr.filter((x, i) => arr.indexOf(x) !== i))];
 
 for (const L of leagues) {
   const id = L.id;
-  for (const k of ["id", "label", "sport", "emoji", "surface", "credits", "disclaimer", "examples", "flavor", "locAliases", "conferences", "divisions", "storage"]) {
+  for (const k of ["id", "label", "sport", "emoji", "surface", "credits", "disclaimer", "examples", "flavor", "locAliases", "conferences", "confNames", "divisions", "storage"]) {
     if (L[k] === undefined) fail(id, `missing "${k}"`);
   }
   if (L.surface && !["field", "court", "maple", "diamond", "ice"].includes(L.surface)) fail(id, `unknown surface "${L.surface}" (add its styles to css/styles.css first)`);
+  for (const c of L.conferences || []) if (!(L.confNames || {})[c]) fail(id, `conference "${c}" needs a full name in confNames`);
   if (!L.divisions) continue;
   const teams = L.divisions.flatMap(d => d.teams.map(t => ({...t, conf: d.conf, div: d.name})));
   const full = t => t.loc ? `${t.loc} ${t.name}` : t.name;

@@ -26,6 +26,7 @@ const C = (name, hex) => ({name, hex});
     "Los Angeles": ["LA"], "New York": ["NY", "NYC"], "Washington": ["Washington DC", "DC"], "Vegas": ["Las Vegas"],
   },
   conferences: ["East", "West"],
+  confNames: {East: "Eastern Conference", West: "Western Conference"},
   divisions: [
     {conf: "East", name: "Atlantic", teams: [
       {name: "Bruins", loc: "Boston", colors: [C("gold", "#FFB81C"), C("black", "#000000")]},

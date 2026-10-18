@@ -28,6 +28,7 @@ const C = (name, hex) => ({name, hex});
     "Washington": ["Washington DC", "DC"], "Las Vegas": ["Vegas"],
   },
   conferences: ["AFC", "NFC"],
+  confNames: {AFC: "American Football Conference", NFC: "National Football Conference"},
   divisions: [
     {conf: "AFC", name: "AFC East", teams: [
       {name: "Bills", loc: "Buffalo", colors: [C("blue", "#00338D"), C("red", "#C60C30")]},

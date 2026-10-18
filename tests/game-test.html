@@ -165,7 +165,7 @@ function run(w, ev){
 
   // --- pools ---
   const pools = [...$("pool").options].map(o=>o.textContent);
-  check("Pool options are All teams (32 teams), AFC (16 teams), NFC (16 teams)", JSON.stringify(pools)===JSON.stringify(["All teams (32 teams)","AFC (16 teams)","NFC (16 teams)"]), pools.join(" | "));
+  check("Pool options use full conference names (All teams, American/National Football Conference)", JSON.stringify(pools)===JSON.stringify(["All teams (32 teams)","American Football Conference (16 teams)","National Football Conference (16 teams)"]), pools.join(" | "));
   $("pool").value = "AFC";
   ev("start")(mode("c2n-mc"));
   check("AFC pool only asks AFC teams", ev("S").queue.every(t=>t.conf==="AFC"));
@@ -177,7 +177,7 @@ function run(w, ev){
   // --- NBA (same rules, different data) ---
   ev("setLeague")("nba"); TEAMS = ev("TEAMS");
   check("Switching league updates pools, subtitle and footer",
-    JSON.stringify([...$("pool").options].map(o=>o.textContent))===JSON.stringify(["All teams (30 teams)","East (15 teams)","West (15 teams)"])
+    JSON.stringify([...$("pool").options].map(o=>o.textContent))===JSON.stringify(["All teams (30 teams)","Eastern Conference (15 teams)","Western Conference (15 teams)"])
     && $("league-sub").textContent.includes("Basketball") && /endorsed by the NBA/.test($("credits").textContent));
   mcChecks("NBA");
   const nbaCases = [
@@ -189,7 +189,7 @@ function run(w, ev){
   const badNba = nbaCases.filter(([m,t,inp,exp])=>typed(m,t,inp)!==exp);
   check(`NBA typed answers (${nbaCases.length} cases)`, !badNba.length, badNba.map(([m,t,i,e])=>`${t} ← "${i}" should be ${e?"accepted":"rejected"}`).join("; "));
   // --- MLB and NHL ---
-  for(const [lid, label, pools] of [["mlb","MLB",["All teams (30 teams)","AL (15 teams)","NL (15 teams)"]], ["nhl","NHL",["All teams (32 teams)","East (16 teams)","West (16 teams)"]], ["wnba","WNBA",["All teams (15 teams)","East (7 teams)","West (8 teams)"]]]){
+  for(const [lid, label, pools] of [["mlb","MLB",["All teams (30 teams)","American League (15 teams)","National League (15 teams)"]], ["nhl","NHL",["All teams (32 teams)","Eastern Conference (16 teams)","Western Conference (16 teams)"]], ["wnba","WNBA",["All teams (15 teams)","Eastern Conference (7 teams)","Western Conference (8 teams)"]]]){
     ev("setLeague")(lid); TEAMS = ev("TEAMS");
     check(`${label}: pools, subtitle, footer and surface`, JSON.stringify([...$("pool").options].map(o=>o.textContent))===JSON.stringify(pools)
       && new RegExp(`endorsed by ${label}|endorsed by the ${label}`).test($("credits").textContent) && w.document.documentElement.dataset.surface===LEAGUES_SURFACE[lid]);

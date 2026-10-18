@@ -143,16 +143,18 @@ html[data-surface="maple"]{background:#2a160b}
     linear-gradient(180deg, #e8b981, #d9a466);
 }
 
-/* baseball (league surface "diamond"): ballpark at night, mowed outfield grass */
-html[data-surface="diamond"]{background:#0c2a14}
+/* baseball (league surface "diamond"): ballpark at dusk. Sunset sky, green outfield wall with a yellow line,
+   then a warm clay infield with chalk foul lines */
+html[data-surface="diamond"]{background:#4a2414}
 [data-surface="diamond"] body{
   background:
-    radial-gradient(ellipse 70% 38% at 18% -6%, rgba(255,250,220,.30), transparent 70%),
-    radial-gradient(ellipse 70% 38% at 82% -6%, rgba(255,250,220,.30), transparent 70%),
-    repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 60px, transparent 60px 120px),
-    repeating-linear-gradient(45deg, rgba(0,0,0,.08) 0 60px, transparent 60px 120px),
-    radial-gradient(ellipse 120% 40% at 50% 112%, #8a5a33 0 60%, #6f4527 60% 62%, transparent 62%),
-    linear-gradient(180deg, #1c5a2b, #134020 45%, #0c2a14);
+    radial-gradient(ellipse 40% 22% at 12% 0, rgba(255,236,190,.32), transparent 70%),
+    radial-gradient(ellipse 40% 22% at 88% 0, rgba(255,236,190,.32), transparent 70%),
+    linear-gradient(180deg, transparent 0 30%, #f2c230 30% calc(30% + 3px), #12432f calc(30% + 3px) 37%, #0b2e20 37% 38%, transparent 38%),
+    linear-gradient(56deg, transparent calc(50% - 1px), rgba(255,255,255,.22) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)) right bottom / 50% 62% no-repeat,
+    linear-gradient(-56deg, transparent calc(50% - 1px), rgba(255,255,255,.22) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)) left bottom / 50% 62% no-repeat,
+    radial-gradient(rgba(0,0,0,.10) 1px, transparent 1.5px) 0 0 / 7px 7px,
+    linear-gradient(180deg, #241a46 0%, #5a2a5a 14%, #a8473f 26%, #c96a3c 30%, #94502e 38%, #7a3f24 62%, #4a2414 100%);
   background-attachment:fixed;
 }
 [data-surface="diamond"] .field{
@@ -164,27 +166,37 @@ html[data-surface="diamond"]{background:#0c2a14}
     linear-gradient(180deg, #2f7a3a 0 20%, #b0703f 20% 80%, #2f7a3a 80%);
 }
 
-/* hockey (league surface "ice"): rink under the arena lights */
-html[data-surface="ice"]{background:#0a1824}
+/* hockey (league surface "ice"): the only light theme. A bright ice sheet with red and blue lines,
+   so text sitting directly on the background switches to dark navy */
+html[data-surface="ice"]{background:#d3e4ef}
+[data-surface="ice"]{--panel:#122331}
 [data-surface="ice"] body{
   background:
-    radial-gradient(ellipse 70% 38% at 18% -6%, rgba(220,240,255,.30), transparent 70%),
-    radial-gradient(ellipse 70% 38% at 82% -6%, rgba(220,240,255,.30), transparent 70%),
-    radial-gradient(circle at 50% 46%, transparent 0 120px, rgba(90,150,230,.16) 120px 123px, transparent 123px),
-    linear-gradient(180deg, transparent calc(46% - 3px), rgba(220,40,50,.22) calc(46% - 3px) calc(46% + 3px), transparent calc(46% + 3px)),
-    linear-gradient(180deg, transparent calc(24% - 5px), rgba(60,120,220,.20) calc(24% - 5px) calc(24% + 5px), transparent calc(24% + 5px)),
-    linear-gradient(180deg, transparent calc(68% - 5px), rgba(60,120,220,.20) calc(68% - 5px) calc(68% + 5px), transparent calc(68% + 5px)),
-    repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0 2px, transparent 2px 9px),
-    linear-gradient(180deg, #1f3c55, #142a3d 45%, #0a1824);
+    radial-gradient(ellipse 80% 30% at 50% -4%, rgba(255,255,255,.9), transparent 70%),
+    radial-gradient(circle at 50% 50%, transparent 0 128px, rgba(200,16,46,.30) 128px 131px, transparent 131px),
+    radial-gradient(circle at 50% 50%, rgba(44,99,196,.45) 0 6px, transparent 6px),
+    linear-gradient(180deg, transparent calc(50% - 3px), rgba(200,16,46,.32) calc(50% - 3px) calc(50% + 3px), transparent calc(50% + 3px)),
+    linear-gradient(180deg, transparent calc(28% - 7px), rgba(44,99,196,.30) calc(28% - 7px) calc(28% + 7px), transparent calc(28% + 7px)),
+    linear-gradient(180deg, transparent calc(72% - 7px), rgba(44,99,196,.30) calc(72% - 7px) calc(72% + 7px), transparent calc(72% + 7px)),
+    repeating-linear-gradient(118deg, rgba(255,255,255,.35) 0 1px, transparent 1px 11px),
+    repeating-linear-gradient(32deg, rgba(120,160,190,.10) 0 1px, transparent 1px 17px),
+    linear-gradient(180deg, #f3f8fb, #e1edf4 50%, #d3e4ef);
   background-attachment:fixed;
 }
+[data-surface="ice"] h1, [data-surface="ice"] .section-label, [data-surface="ice"] #quiz-title{color:#0b2545;text-shadow:none}
+[data-surface="ice"] h1 span{color:#c8102e}
+[data-surface="ice"] header .sub, [data-surface="ice"] footer{color:#3d556b}
+[data-surface="ice"] .section-label::after{background:rgba(11,37,69,.18)}
+[data-surface="ice"] .league[aria-pressed="true"]{background:linear-gradient(rgba(255,207,63,.16),rgba(255,207,63,.16)),#0b2545}
 [data-surface="ice"] .field{
+  border-color:#0b2545;
   background:
     radial-gradient(circle at 50% 50%, #2c63c4 0 3px, transparent 3px 10px, rgba(44,99,196,.85) 10px 12px, transparent 12px),
     linear-gradient(90deg,
       transparent 0 5%, #c8102e 5% 5.6%, transparent 5.6% 34%, #2c63c4 34% 36%, transparent 36% calc(50% - 2px),
       #c8102e calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px) 64%, #2c63c4 64% 66%, transparent 66% 94.4%, #c8102e 94.4% 95%, transparent 95%),
-    linear-gradient(180deg, #f4f9fc, #dde9f1);
+    linear-gradient(180deg, #ffffff, #e8f1f7);
 }
-@media (max-width:480px){.leagues{grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:6px}.league{flex-direction:column;font-size:18px;gap:0;padding:6px 2px;line-height:1.1;min-height:52px}h1{font-size:46px}.prompt{font-size:40px}.big .sw i{width:58px;height:44px}.score{font-size:76px}.pop,.pop.bad{font-size:44px}}
+
+@media (max-width:480px){select{max-width:100%;font-size:15px;padding:10px 8px}.leagues{grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:6px}.league{flex-direction:column;font-size:18px;gap:0;padding:6px 2px;line-height:1.1;min-height:52px}h1{font-size:46px}.prompt{font-size:40px}.big .sw i{width:58px;height:44px}.score{font-size:76px}.pop,.pop.bad{font-size:44px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
